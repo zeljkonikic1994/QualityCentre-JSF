@@ -1,0 +1,47 @@
+body {
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    color: #000000;  
+}
+
+h1 {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    border-bottom: 1px solid #AFAFAF; 
+    font-size:  16px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #D20005;
+}
+
+a:link, a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: gray !important;
+    font-weight : bold;
+    text-decoration : underline;
+}
+.notification-icon{
+    background:             radial-gradient( 5px -9px, circle, white 8%, red 26px );
+    background:    -moz-radial-gradient( 5px -9px, circle, white 8%, red 26px );
+    background:     -ms-radial-gradient( 5px -9px, circle, white 8%, red 26px );
+    background:      -o-radial-gradient( 5px -9px, circle, white 8%, red 26px );
+    background: -webkit-radial-gradient( 5px -9px, circle, white 8%, red 26px );
+    background-color: red;
+    border: 2px solid white;
+    border-radius: 12px; /* one half of ( (border * 2) + height + padding ) */
+    box-shadow: 1px 1px 1px black;
+    color: white;
+    font: bold 12px Helvetica, Verdana, Tahoma;
+    height: 24px; 
+    width: 23px;
+    padding: 4px 3px 0 3px;
+    text-align: center;
+    min-width: 14px;
+}
+

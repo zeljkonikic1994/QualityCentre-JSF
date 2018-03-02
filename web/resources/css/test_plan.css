@@ -1,0 +1,16 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 9, 2018, 11:25:13 AM
+    Author     : ZXNIKIC
+*/
+
+.noBorder tr {
+border-width: 0 ;
+}
+.ui-panelgrid td{
+    border-width: 0
+}

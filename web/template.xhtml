@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:event type="preRenderView"
+             listener="#{mbRedirect.forwardToLoginIfNotLoggedIn}" />
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="css/default.css"/>
+        <h:outputStylesheet name="css/cssLayout.css"/>
+        <h:outputStylesheet name="css/bootstrap-theme.css"/>
+        <h:outputStylesheet name="css/bootstrap-theme.min.css"/>
+        <h:outputStylesheet name="css/bootstrap.css"/>
+        <h:outputStylesheet name="css/bootstrap.min.css"/>
+
+        <h:outputScript library="js" name="bootstrap.js" />
+        <h:outputScript library="js" name="bootstrap.min.js" />
+        <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
+        <title>Quality Center</title>                
+    </h:head>
+
+    <h:body>
+
+        <div id="top" >
+            <nav class="navbar navbar-inverse navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar3">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+                        <h:graphicImage library="images" name="logo.png" />
+
+
+                    </div>
+                    <div id="navbar3" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right" style="margin-top: 20px;">
+                            <li class="active" style="margin-right: 10px;">
+                                <h:form>
+                                    <h:commandLink action="/faces/userManagement.xhtml" style="text-decoration: none;" rendered="#{not empty currentUser and currentUser.type.id eq 1}" >
+                                        User management
+                                    </h:commandLink>
+                                </h:form>
+                            </li>
+                            <li style="margin-right: 10px; text-decoration: none;">
+                                <ui:fragment rendered="#{not empty currentUser and currentUser.type.id eq 1 and not empty mbAdmin.unregistered}">
+                                    <h:form>
+                                        <h:commandLink action="/faces/userManagement.xhtml"  style="text-decoration: none;">
+                                            <div class="notification-icon">
+                                                #{mbAdmin.unregistered.size()}
+                                            </div>
+                                        </h:commandLink>
+                                    </h:form>
+
+                                </ui:fragment>
+                            </li>
+                            <li>
+                                <h:form>
+                                    <h:commandLink action="#{mbLogOut.logout()}" style="text-decoration: none;" rendered="#{not empty currentUser}" >
+                                        Log out
+                                    </h:commandLink>
+                                </h:form>
+                            </li>
+                            <!--                            <li>
+                                                            <h:form>
+                                                                <h:commandLink action="/faces/welcomePrimefaces.xhtml" style="text-decoration: none;" >
+                                                                    Test page
+                                                                </h:commandLink>
+                                                            </h:form>
+                                                        </li>-->
+
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content"></ui:insert>
+        </div>
+
+        <div id="bottom">           
+            <div class="container">
+                <p>Quality Center - All rights reserved - Nikic Zeljko - FON - ISIT</p>
+            </div>
+        </div>
+
+    </h:body>
+
+</html>

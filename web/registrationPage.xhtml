@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+
+    <ui:define name="content">
+        <h:outputStylesheet library="css" name="index_css.css"  />
+        <h:outputStylesheet library="css" name="loginForm.css"  />
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-offset-4">
+                    <div class="login-container">
+
+                        <div class="form-box">
+                            <h:form class="form-horizontal" role="form" id="forma" >          
+                                <p:growl id="growl"   />
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Name:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputText value="#{mbRegister.name}" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Last Name:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputText value="#{mbRegister.lastName}" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Gender:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p:selectOneMenu id="gender" value="#{mbRegister.gender}" >
+                                            <f:selectItem itemLabel="Male" itemValue="m" />
+                                            <f:selectItem itemLabel="Female" itemValue="f" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Mail:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputText value="#{mbRegister.mail}" validatorMessage="Mail is not in valid form." >
+                                            <f:validateRegex pattern="^.+\@.+\..+$"  />
+                                        </h:inputText>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Username:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputText value="#{mbRegister.username}" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Password:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputSecret value="#{mbRegister.password}" validatorMessage="Password rules:
+                                                       8-10 characters,
+                                                       at least 1 capital letter, at least 3 small letters,
+                                                       at least 1 number and 1 special charater. 
+                                                       First character must be a letter (small or capital). 
+                                                       Max 2 same continual charaters.  " >
+                                            <f:validateRegex pattern="^(?=(.*[a-z]){3,})(?=(.*[A-Z]){1,})(?=(.*[0-9!@#$%^&amp;*()_+\-=\[\]{};':&quot;\\|,.&lt;&gt;\/?]){1,})(?!.*(.)\4\4)[a-zA-z].{7,9}$"  />
+                                        </h:inputSecret>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Confirm Password:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <h:inputSecret value="#{mbRegister.confirmedPassword}" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <h:outputLabel value="Type:"  />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p:selectOneMenu value="#{mbRegister.type}" converter="typeConverter" >
+                                            <f:selectItems value="#{mbRegister.types}" var="t" itemLabel="#{t}" itemValue="#{t}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <p:commandButton value="Register" styleClass="loginButton" update="growl" actionListener="#{mbRegister.register()}" ajax="true" />
+                                <br/>
+                                <div class="form-group">
+                                    <h:link outcome="index" value="Back to login!" />
+                                    <!--<a  href="index.xhtml" >Back to login!</a>-->
+                                    &nbsp;
+                                    <h:link outcome="changePasswordPage" value="Change password?" />
+                                    <!--<a  href="changePasswordPage.xhtml" >Change password?</a>-->                                 
+                                </div>
+
+                            </h:form> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

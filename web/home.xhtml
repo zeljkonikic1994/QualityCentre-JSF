@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./template.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:outputStylesheet name="css/index_css.css"  />
+        <h:outputStylesheet name="css/loginForm.css"  />
+
+        <p:notificationBar position="top" 
+                           style="opacity: 0.8; z-index: 9998;" 
+                           effect="fade" 
+                           styleClass="top" 
+                           widgetVar="bar" 
+                           rendered="#{not empty currentUser and currentUser.type.id eq 1 and not empty mbAdmin.unregistered}">
+            <h:outputText value="There are new user requests" style="font-size:36px;" />
+            <h:form>
+                <h:commandLink action="/faces/userManagement.xhtml" style="font-size:22px; text-decoration: blink; " >
+                    There are new user requests waiting for approval...
+                </h:commandLink>
+            </h:form>
+        </p:notificationBar>
+        <script type="text/javascript">
+//          skripta koja sakriva notification bar nakon nekog vremena. 
+            jQuery(document).ready(function () {
+                try {
+                    PF('bar').show();
+//                    console.log('prikazao');
+                    setTimeout(function () {
+                        PF('bar').hide();
+                    }, 5000);
+                } catch (err) {
+                    console.log('No unregistered users');
+                }
+
+            });
+        </script> 
+    </ui:define>
+    <ui:define name="content">
+        <p:growl id="growl" showDetail="true" escape="false"/>
+        <p:tabView dynamic="true" cache="true" effect="fold" styleClass="tabMenu" >
+
+            <p:tab title="Test Plan">
+                <h:form id="frm" style="position: center;">
+                    <p:tree value="#{mbTestTreeView.root}" 
+                            var="node" 
+                            selectionMode="single"
+                            style="border-width:0;">
+                        <p:ajax event="select" listener="#{mbTestTreeView.onNodeSelect}" update="@form:deleteBtn" />
+
+                        <p:treeNode icon="ui-icon-grip-diagonal-se">
+                            <h:outputText value="#{node.name}"/>
+                        </p:treeNode>
+                        <p:treeNode type="test" icon="ui-icon-folder-open">
+                            <h:outputText value="#{node.name}"/>
+                        </p:treeNode>
+                        <p:treeNode type="step" icon="ui-icon-comment">
+                            <h:outputText value="#{node.name}"/>
+                        </p:treeNode>
+                    </p:tree>
+                    <p:commandButton value="New test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.newTest}">
+                        <p:ajax event="dialogReturn" update="@form" />
+                    </p:commandButton>
+                    <p:commandButton value="Edit test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.viewTest}">
+                        <p:ajax event="dialogReturn" update="@form" />
+                    </p:commandButton>
+
+                    <p:commandButton id="deleteBtn" value="Delete test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.deleteTest}" update="@form" >
+                        <p:confirm disabled="#{empty mbTestTreeView.selectedTest}" header="Confirmation" message="Are you sure you want to delete this test?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                    <p:tree value="#{mbTestSetTreeView.root}" 
+                            var="node" 
+                            selectionMode="single"
+                            style="border-width:0;">
+                        <p:ajax event="select" listener="#{mbTestSetTreeView.onNodeSelect}" update="@form:deleteSetBtn" />
+                        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                            <h:outputText value="#{node.name}"/>
+                        </p:treeNode>
+                    </p:tree>
+                    <p:commandButton value="New set" icon="ui-icon-extlink" actionListener="#{mbTestSetTreeView.newSet}">
+                        <p:ajax event="dialogReturn" update="@form" />
+                    </p:commandButton>
+                    <p:commandButton value="Edit test set" icon="ui-icon-extlink" actionListener="#{mbTestSetTreeView.viewSet}">
+                        <p:ajax event="dialogReturn" update="@form" />
+                    </p:commandButton>
+                    <p:commandButton id="deleteSetBtn" value="Delete set" icon="ui-icon-extlink" actionListener="#{mbTestSetTreeView.deleteSet}" update="@form" >
+                        <p:confirm disabled="#{empty mbTestSetTreeView.selectedSet}" header="Confirmation" message="Are you sure you want to delete this Set?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:confirmDialog global="true" width="500px" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </h:form>
+            </p:tab>
+
+            <p:tab title="Test Lab">
+
+            </p:tab>
+            <p:tab title="Statistics">
+
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</ui:composition>
+
+

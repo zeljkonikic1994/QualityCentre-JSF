@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:b="http://bootsfaces.net/ui">
+
+    <ui:define name="content">
+        <h:outputStylesheet library="css" name="index_css.css"  />
+        <h:outputStylesheet library="css" name="loginForm.css"  />
+        <h:outputStylesheet library="css" name="jquery.growl.css"  />
+        <h:outputScript library="js" name="steps.js"/>
+        <h:outputScript library="js" name="jquery.growl.js"/>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-sm-offset-2" >
+                    <div class="form-box">
+                        <h:form class="form-horizontal" role="form" id="form">
+                            <p:growl id="growl"/>
+                            <br/>
+                            <p:dataTable  value="#{mbAdmin.unregistered}"
+                                          var="user" 
+                                          style="background-color: white; border: 1px solid black"  
+                                          paginator="true" 
+                                          rows="5"
+                                          paginatorTemplate="{RowsPerPageDropdown} {PreviousPageLink} {CurrentPageReport} {NextPageLink}" 
+                                          paginatorPosition="bottom" 
+                                          rowsPerPageTemplate="5,10,15"
+                                          rendered="#{not empty mbAdmin.unregistered}">
+
+                                <f:facet name="header">
+                                    User requests
+                                </f:facet>
+                                <p:column headerText="Name" sortable="false" filterable="false">
+                                    <h:outputText value="#{user.name}" />
+                                </p:column>
+                                <p:column headerText="Last name" sortable="false" filterable="false">
+                                    <h:outputText value="#{user.lastName}" />
+                                </p:column>
+                                <p:column headerText="Username" sortable="false" filterable="false">
+                                    <h:outputText value="#{user.userName}" />
+                                </p:column>
+                                <p:column headerText="Type" sortable="false" filterable="false">
+                                    <h:outputText value="#{user.type}" />
+                                </p:column>
+                                <p:column headerText="Action" sortable="false" filterable="false" style="text-align: center"  >
+                                    <p:commandLink  action="#{mbAdmin.approve(user)}"  update=":form"  >
+                                        <f:ajax render="@all" delay="2000"/>
+                                        <h:graphicImage library="images" name="approve.png"/>
+                                    </p:commandLink>
+                                    &nbsp;
+                                    <p:commandLink  action="#{mbAdmin.reject(user)}"  update=":form"  >
+                                        <f:ajax render="@all" delay="2000"/>
+                                        <h:graphicImage library="images" name="reject.png"/>
+                                    </p:commandLink>
+                                </p:column>
+
+                            </p:dataTable>
+                            <br/>
+                            <p:dataTable  value="#{mbAdmin.registered}"   
+                                          var="user" 
+                                          style="background-color: white; border: 1px solid black;"  
+                                          paginator="true" 
+                                          rows="10"
+                                          paginatorTemplate="{RowsPerPageDropdown} {PreviousPageLink} {CurrentPageReport} {NextPageLink}" 
+                                          paginatorPosition="bottom"
+                                          editable="true">
+
+                                <f:facet name="header">
+                                    All users
+                                </f:facet>
+                                <p:ajax event="rowEdit" listener="#{mbAdmin.onRowEdit}" update="@all" />
+                                <p:ajax event="rowEditCancel" listener="#{mbAdmin.onRowCancel}" update="@all" />
+
+                                <p:column headerText="Name" sortBy="#{user.name}" filterable="false">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{user.name}" /></f:facet>
+                                        <f:facet name="input"><p:inputText id="modelInput" value="#{user.name}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Last name" sortBy="#{user.lastName}"  filterable="false">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{user.lastName}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{user.lastName}" style="width:100%" label="Year"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Username" sortBy="#{user.userName}" filterable="false">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{user.userName}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{user.userName}" style="width:100%" label="Year"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Type" sortBy="#{user.type.id}" filterable="false">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{user.type}" /></f:facet>
+                                        <f:facet name="input">
+                                            <h:selectOneMenu value="#{user.type}" styleClass="typeDropDown" converter="typeConverter">
+                                                <f:selectItems value="#{mbAdmin.types}" var="type" itemLabel="#{type}" itemValue="#{type}" />
+                                            </h:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Edit" sortable="false" filterable="false" style="text-align: center"  >
+                                    <p:rowEditor />
+                                </p:column>
+                                <p:column headerText="Delete" sortable="false" filterable="false" style="text-align: center"  >
+                                    <p:commandLink actionListener="#{mbAdmin.delete(user)}" update=":form">
+                                        <!--<f:ajax render="@all" />-->
+                                        <p:confirm header="Confirmation" message="Are you sure you want to delete this user?" icon="ui-icon-alert" />
+                                        <h:graphicImage library="images" name="delete.png"/>
+                                    </p:commandLink>
+                                    <p:confirmDialog global="true" width="500px" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
