@@ -46,11 +46,11 @@
 
             <p:tab title="Test Plan">
                 <h:form id="frm" style="position: center;">
-                    <p:tree value="#{mbTestTreeView.root}" 
+                    <p:tree value="#{mbTestTreeView2.root}" 
                             var="node" 
                             selectionMode="single"
                             style="border-width:0;">
-                        <p:ajax event="select" listener="#{mbTestTreeView.onNodeSelect}" update="@form:deleteBtn" />
+                        <p:ajax event="select" listener="#{mbTestTreeView2.onNodeSelect}" update="@form:deleteBtn" />
 
                         <p:treeNode icon="ui-icon-grip-diagonal-se">
                             <h:outputText value="#{node.name}"/>
@@ -62,15 +62,15 @@
                             <h:outputText value="#{node.name}"/>
                         </p:treeNode>
                     </p:tree>
-                    <p:commandButton value="New test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.newTest}">
+                    <p:commandButton value="New test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView2.newTest}">
                         <p:ajax event="dialogReturn" update="@form" />
                     </p:commandButton>
-                    <p:commandButton value="Edit test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.viewTest}">
+                    <p:commandButton value="Edit test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView2.viewTest}">
                         <p:ajax event="dialogReturn" update="@form" />
                     </p:commandButton>
 
-                    <p:commandButton id="deleteBtn" value="Delete test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.deleteTest}" update="@form" >
-                        <p:confirm disabled="#{empty mbTestTreeView.selectedTest}" header="Confirmation" message="Are you sure you want to delete this test?" icon="ui-icon-alert" />
+                    <p:commandButton id="deleteBtn" value="Delete test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView2.deleteTest}" update="@form" >
+                        <p:confirm disabled="#{empty mbTestTreeView2.selectedTest}" header="Confirmation" message="Are you sure you want to delete this test?" icon="ui-icon-alert" />
                     </p:commandButton>
 
                     <p:tree value="#{mbTestSetTreeView.root}" 
@@ -99,8 +99,24 @@
             </p:tab>
 
             <p:tab title="Test Lab">
-
+<!--                <h:form id="testLabForm">
+                    <p:treeTable value="#{mbTreeTable.root}" var="node">
+                        <f:facet name="header">
+                            Test Sets
+                        </f:facet>
+                        <p:column headerText="Name">
+                            <h:outputText value="#{node.name}" />
+                        </p:column>
+                        <p:column headerText="Type">
+                            <h:outputText value="#{node.type}" />
+                        </p:column>
+                        <p:column headerText="Status">
+                            <h:outputText value="#{node.status}" />
+                        </p:column>
+                    </p:treeTable>
+                </h:form>-->
             </p:tab>
+
             <p:tab title="Statistics">
 
             </p:tab>

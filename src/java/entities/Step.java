@@ -54,7 +54,7 @@ public class Step implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "expected")
     private String expected;
-    
+
     @JoinColumn(name = "test_id", referencedColumnName = "test_id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Test test;
@@ -64,6 +64,14 @@ public class Step implements Serializable {
 
     public Step(StepPK stepPK) {
         this.stepPK = stepPK;
+    }
+
+    public Step(StepPK stepPK, String name, String description, String expected, Test test) {
+        this.stepPK = stepPK;
+        this.name = name;
+        this.description = description;
+        this.expected = expected;
+        this.test = test;
     }
 
     public Step(StepPK stepPK, String name, String description, String expected) {
@@ -142,6 +150,4 @@ public class Step implements Serializable {
         return "Step{" + "stepPK=" + stepPK + ", name=" + name + ", description=" + description + ", expected=" + expected + ", test=" + test + '}';
     }
 
-    
-    
 }

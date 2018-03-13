@@ -43,25 +43,25 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Test implements Serializable {
 
     private static final long serialVersionUID = 1L;
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "test_id")
     private Integer testId;
-   
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "date_created")
     @Temporal(TemporalType.DATE)
     private Date dateCreated;
-    
+
     @Basic(optional = false)
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
-   
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "test", fetch = FetchType.EAGER,orphanRemoval = true)
+
+    @OneToMany(mappedBy = "test", orphanRemoval = true, fetch = FetchType.EAGER,  cascade = CascadeType.PERSIST)
     private List<Step> stepList = new ArrayList<>();
 
     public Test() {
@@ -75,6 +75,13 @@ public class Test implements Serializable {
         this.testId = testId;
         this.dateCreated = dateCreated;
         this.name = name;
+    }
+
+    public Test(Integer testId, Date dateCreated, String name, List<Step> stepList) {
+        this.testId = testId;
+        this.dateCreated = dateCreated;
+        this.name = name;
+        this.stepList = stepList;
     }
 
     public Integer getTestId() {
@@ -105,18 +112,22 @@ public class Test implements Serializable {
     public List<Step> getStepList() {
         return stepList;
     }
-    
-    public void addStep(Step step){
-        stepList.add(step);
+
+    public void addStep(Step step) {
+        if (step != null) {
+            stepList.add(step);
+            step.setTest(this);
+        }
     }
 
     public void setStepList(List<Step> stepList) {
         this.stepList = stepList;
     }
 
-    public int getNumberOfSteps(){
+    public int getNumberOfSteps() {
         return stepList.size();
     }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -136,14 +147,17 @@ public class Test implements Serializable {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "entities.Test[ testId=" + testId + " ]";
     }
 
     public void removeStep(Step s) {
-        this.stepList.remove(s);
+        if (s != null) {
+            this.stepList.remove(s);
+            s.setTest(null);
+        }
     }
-    
+
 }

@@ -311,7 +311,9 @@ public class MBTestSetTreeView implements Serializable {
                 dropStepToStep(dragData, dropData);
                 dropped = true;
             }
-        } 
+        } else if(dragData instanceof Folder){
+            populateTrees();
+        }
         if (dropped) {
             populateTrees();
         }
