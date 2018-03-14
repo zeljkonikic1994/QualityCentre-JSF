@@ -5,55 +5,110 @@
  */
 package mb;
 
-import db.HibernateUtil;
+import controller.Controller;
+import dto.StepDTO;
+import dto.TestDTO;
 import entities.Step;
-import entities.StepPK;
 import entities.Test;
+import javax.inject.Named;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Query;
+import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import util.EntityHelper;
 
 /**
  *
  * @author ZXNIKIC
  */
-@ManagedBean(name = "mbTestTreeView")
+@Named(value = "mbTestTreeView")
 @SessionScoped
 public class MBTestTreeView implements Serializable {
 
+    @Inject
+    Controller controller;
+    
     private TreeNode root;
-    private Test selectedTest;
-    private List<Test> allTests;
-    private Step newStep;
+    private TestDTO selectedTest;
+    private List<TestDTO> allTests;
+    private StepDTO newStep;
+    private List<StepDTO> removedSteps;
 
     @PostConstruct
     public void init() {
         loadTests();
         setStepNumbers(allTests);
         populateTree();
-        newStep = new Step();
+
+        removedSteps = new ArrayList<>();
+
+        newStep = new StepDTO();
         newStep.setDescription("");
         newStep.setExpected("");
         newStep.setName("");
     }
 
+    /**
+     * Creates a new instance of MBTestTreeView2
+     */
+    public MBTestTreeView() {
+    }
+
+    public void loadTests() {
+        List<Test> testsFromDB = controller.loadTests();
+        if (selectedTest != null) {
+            for (TestDTO test : allTests) {
+                if (test.getTestId() == selectedTest.getTestId()) {
+                    selectedTest = test;
+                }
+            }
+        }
+        List<TestDTO> dtos = EntityHelper.convertFromTestList(testsFromDB);
+        this.allTests = dtos;
+    }
+
+    private void setStepNumbers(List<TestDTO> testList) {
+        for (TestDTO testDTO : testList) {
+            int no = 1;
+            for (StepDTO stepDTO : testDTO.getStepList()) {
+                stepDTO.setStepId(no);
+                no++;
+            }
+        }
+    }
+
+    private void populateTree() {
+        root = new DefaultTreeNode("Root", null);
+        for (TestDTO test : allTests) {
+            TreeNode node = new DefaultTreeNode("test", test, root);
+            for (StepDTO step : test.getStepList()) {
+                TreeNode child = new DefaultTreeNode("step", step, node);
+            }
+        }
+    }
+
+    public void onNodeSelect(NodeSelectEvent event) {
+        if (event.getTreeNode().getData() instanceof TestDTO) {
+            this.selectedTest = (TestDTO) event.getTreeNode().getData();
+        } else if (event.getTreeNode().getData() instanceof StepDTO) {
+            this.selectedTest = ((StepDTO) event.getTreeNode().getData()).getTest();
+        }
+    }
+
     public void newTest() {
-        selectedTest = new Test();
+        selectedTest = new TestDTO();
         selectedTest.setTestId(0);
         selectedTest.setDateCreated(new Date());
         Map<String, Object> options = new HashMap<String, Object>();
@@ -67,6 +122,30 @@ public class MBTestTreeView implements Serializable {
         options.put("closable", true);
 
         PrimeFaces.current().dialog().openDynamic("dialogAddTest", options, null);
+    }
+
+    public void saveTest() {
+        controller.saveTest(selectedTest);
+        clearFields();
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+
+    private void clearFields() {
+        selectedTest = null;
+        removedSteps = new ArrayList<>();
+
+        newStep = new StepDTO();
+        newStep.setDescription("");
+        newStep.setExpected("");
+        newStep.setName("");
+        loadTests();
+        setStepNumbers(allTests);
+        populateTree();
+    }
+
+    public void exitWithoutSaving() {
+        PrimeFaces.current().dialog().closeDynamic(null);
+        clearFields();
     }
 
     public void viewTest() {
@@ -88,150 +167,16 @@ public class MBTestTreeView implements Serializable {
         }
     }
 
-    public void deleteTest() {
-        if (selectedTest != null) {
-            deleteSelectedTest(selectedTest);
-            clearFields();
-        } else {
-            showMessage("Error", "You must select a test to delete!");
-        }
-    }
-
     public void showMessage(String title, String text) {
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, title, text);
         PrimeFaces.current().dialog().showMessageDynamic(message);
     }
 
-    public void saveTest() {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(selectedTest);
-        session.getTransaction().commit();
-        session.flush();
-        session.close();
-        
-        clearFields();
-        PrimeFaces.current().dialog().closeDynamic(null);
-    }
-
-    public void deleteStep(Step s) {
-        selectedTest.getStepList().remove(s);
-        setStepNumbers(selectedTest);
-    }
-
-    public void addNewStep() {
-        Step step = new Step();
-        step.setName(newStep.getName());
-        step.setDescription(newStep.getDescription());
-        step.setExpected(newStep.getExpected());
-        step.setTest(selectedTest);
-        step.setStepPK(new StepPK(selectedTest.getStepList().size() + 1, selectedTest.getTestId()));
-        selectedTest.addStep(step);
-        setStepNumbers(selectedTest);
-    }
-
-    public void exitWithSaving() {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.saveOrUpdate(selectedTest);
-        session.getTransaction().commit();
-        session.flush();
-        session.close();
-        clearFields();
-
-        PrimeFaces.current().dialog().closeDynamic(null);
-    }
-
-    public void exitWithoutSaving() {
-        PrimeFaces.current().dialog().closeDynamic(null);
-        clearFields();
-    }
-
-    private void setStepNumbers(List<Test> testList) {
-        for (Test t : testList) {
-            int no = 1;
-            for (Step s : t.getStepList()) {
-                s.setStepPK(new StepPK(no, t.getTestId()));
-                no++;
-            }
-        }
-    }
-
-    private void setStepNumbers(Test selectedTest) {
-        int no = 1;
-        for (Step s : selectedTest.getStepList()) {
-            s.setStepPK(new StepPK(no, selectedTest.getTestId()));
-            no++;
-        }
-    }
-
-    private void clearFields() {
-        selectedTest = null;
-        newStep = new Step();
-        newStep.setDescription("");
-        newStep.setExpected("");
-        newStep.setName("");
-        loadTests();
-        setStepNumbers(allTests);
-        populateTree();
-    }
-
-    private void deleteSelectedTest(Test selectedTest) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-
-        session.delete(selectedTest);
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
-//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Test " + selectedTest.getName()+ " is deleted", null);
-//        FacesContext.getCurrentInstance().addMessage(null, message);
-    }
-
-    public void loadTests() {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        Query query = session.getNamedQuery("Test.findAll");
-        List<Test> testList = query.list();
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
-        if (selectedTest != null) {
-            for (Test test : testList) {
-                if (test.getTestId() == selectedTest.getTestId()) {
-                    selectedTest = test;
-                }
-            }
-        }
-        setStepNumbers(testList);
-
-        this.allTests = testList;
-    }
-
-    public void populateTree() {
-        root = new DefaultTreeNode("Root", null);
-        for (Test t : allTests) {
-            TreeNode node = new DefaultTreeNode("test", t, root);
-            for (Step s : t.getStepList()) {
-                TreeNode child = new DefaultTreeNode("step", s, node);
-//                child.setSelectable(false);
-            }
-        }
-    }
-
     public void onRowEdit(RowEditEvent event) {
-        Step s = (Step) event.getObject();
-        for (Test test : allTests) {
-            for (Step step : test.getStepList()) {
-                if(step.getStepPK().equals(s.getStepPK())){
+        StepDTO s = (StepDTO) event.getObject();
+        for (TestDTO test : allTests) {
+            for (StepDTO step : test.getStepList()) {
+                if (step.equals(s)) {
                     step.setName(s.getName());
                     step.setDescription(s.getDescription());
                     step.setExpected(s.getExpected());
@@ -247,32 +192,87 @@ public class MBTestTreeView implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
+    public void deleteStep(StepDTO s) {
+        selectedTest.getStepList().remove(s);
+        removedSteps.add(s);
+        setStepNumbers(selectedTest);
+    }
+
+    private void setStepNumbers(TestDTO selectedTest) {
+        int no = 1;
+        for (StepDTO s : selectedTest.getStepList()) {
+            s.setStepId(no);
+            no++;
+        }
+    }
+
+    public void addNewStep() {
+        StepDTO step = new StepDTO(selectedTest.getStepList().size() + 1, selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
+        selectedTest.addStep(step);
+        setStepNumbers(selectedTest);
+    }
+
+    public void exitWithSaving() {
+        deleteSteps();
+        saveSteps();
+        clearFields();
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
+
     public TreeNode getRoot() {
         return root;
     }
 
-    public void onNodeSelect(NodeSelectEvent event) {
-        if (event.getTreeNode().getData() instanceof Test) {
-            this.selectedTest = (Test) event.getTreeNode().getData();
-        }else if(event.getTreeNode().getData() instanceof Step){
-            this.selectedTest = ((Step) event.getTreeNode().getData()).getTest();
-        }
+    public void setRoot(TreeNode root) {
+        this.root = root;
     }
 
-    public Test getSelectedTest() {
+    public TestDTO getSelectedTest() {
         return selectedTest;
     }
 
-    public void setSelectedTest(Test selectedTest) {
+    public void setSelectedTest(TestDTO selectedTest) {
         this.selectedTest = selectedTest;
     }
 
-    public Step getNewStep() {
+    public List<TestDTO> getAllTests() {
+        return allTests;
+    }
+
+    public void setAllTests(List<TestDTO> allTests) {
+        this.allTests = allTests;
+    }
+
+    public StepDTO getNewStep() {
         return newStep;
     }
 
-    public void setNewStep(Step newStep) {
+    public void setNewStep(StepDTO newStep) {
         this.newStep = newStep;
+    }
+
+    private void deleteSteps() {
+        if (removedSteps.isEmpty()) {
+            return;
+        }
+        controller.deleteStepList(removedSteps);
+        removedSteps = new ArrayList<>();
+    }
+
+    public void deleteTest() {
+        if (selectedTest != null) {
+            deleteSelectedTest();
+            clearFields();
+        } else {
+            showMessage("Error", "You must select a test to delete!");
+        }
+    }
+    private void deleteSelectedTest() {
+        controller.deleteTest(selectedTest);
+    }
+
+    private void saveSteps() {
+        controller.saveSteps(selectedTest.getStepList());
     }
 
 }

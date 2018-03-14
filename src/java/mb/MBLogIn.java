@@ -5,19 +5,13 @@
  */
 package mb;
 
-import db.HibernateUtil;
+import controller.Controller;
 import entities.User;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import javax.inject.Inject;
 
 /**
  *
@@ -27,6 +21,9 @@ import org.hibernate.criterion.Restrictions;
 @RequestScoped
 public class MBLogIn {
 
+    @Inject
+    Controller controller;
+    
     String username;
     String password;
 
@@ -56,7 +53,7 @@ public class MBLogIn {
             return "";
         }
 
-        User user = getUserWithSpecifiedUserName(username);
+        User user = controller.getUserWithSpecifiedUserName(username);
 
         if (user == null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User with that username does not exists", null);
@@ -67,15 +64,6 @@ public class MBLogIn {
                 if (checkIfUserIsApproved(user)) {
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", user);
                     FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "home.xhtml?faces-redirect=true");
-//                    try {
-//                        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", user);
-//
-////                        FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "home.xhtml?faces-redirect=true");
-//                        FacesContext.getCurrentInstance().getExternalContext().redirect("faces/home.xhtml");
-//                        FacesContext.getCurrentInstance().responseComplete();
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(MBLogIn.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
                     return "";
                 } else {
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User is still not approved.", null);
@@ -99,20 +87,7 @@ public class MBLogIn {
         }
     }
 
-    private User getUserWithSpecifiedUserName(String username) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        Criteria query = session.createCriteria(User.class);
-        User user = (User) query.add(Restrictions.eq("userName", username)).uniqueResult();
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
-
-        return user;
-    }
+    
 
     private boolean checkPassword(String userPassword, String enteredPassword) {
         if (userPassword.equals(enteredPassword)) {

@@ -147,4 +147,8 @@ public class TestSet implements Serializable {
         return "entities.TestSet[ id=" + id + " ]";
     }
     
+    public void addSpecificStep(SpecificStep ss){
+        this.specificStepList.add(ss);
+    }
+    
 }

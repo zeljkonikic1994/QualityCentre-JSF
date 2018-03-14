@@ -5,7 +5,7 @@
  */
 package mb;
 
-import db.HibernateUtil;
+import controller.Controller;
 import entities.User;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -14,11 +14,7 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-
+import javax.inject.Inject;
 /**
  *
  * @author zeljk
@@ -26,6 +22,9 @@ import org.hibernate.criterion.Restrictions;
 @Named(value = "mbChangePassword")
 @RequestScoped
 public class MBChangePassword {
+
+    @Inject
+    Controller controller;
 
     String username, password, newPassword;
 
@@ -55,7 +54,8 @@ public class MBChangePassword {
 
     public String changePassword() {
         if (checkIfAllFieldsAreEntered()) {
-            User user = getUserWithSpecifiedUserName(username);
+            User user = controller.getUserWithSpecifiedUserName(username);
+
             if (user == null) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User with that user name does not exists.", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
@@ -99,21 +99,6 @@ public class MBChangePassword {
     public MBChangePassword() {
     }
 
-    private User getUserWithSpecifiedUserName(String username) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        Criteria query = session.createCriteria(User.class);
-        User user = (User) query.add(Restrictions.eq("userName", username)).uniqueResult();
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
-
-        return user;
-    }
-
     private boolean checkPassword(String userPassword, String enteredPassword) {
         if (userPassword.equals(enteredPassword)) {
             return true;
@@ -123,18 +108,8 @@ public class MBChangePassword {
     }
 
     private void changePasswordInDB(User user) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        Criteria query = session.createCriteria(User.class);
         user.setPassword(newPassword);
-
-        session.update(user);
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
+        controller.updateUser(user);
     }
 
 }

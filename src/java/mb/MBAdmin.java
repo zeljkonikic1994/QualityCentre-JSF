@@ -6,25 +6,18 @@
 package mb;
 
 import controller.Controller;
-import db.HibernateUtil;
 import entities.Type;
 import entities.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.primefaces.event.RowEditEvent;
-
 /**
  *
  * @author zeljk
@@ -34,7 +27,7 @@ import org.primefaces.event.RowEditEvent;
 public class MBAdmin implements Serializable {
 
     @Inject
-    Controller cont;
+    Controller controller;
 
     List<User> unregistered;
     List<User> registered;
@@ -69,62 +62,31 @@ public class MBAdmin implements Serializable {
      */
     @PostConstruct
     public void initPage() {
-        cont = new Controller();
-        
-        types = cont.loadTypes();
+        controller = new Controller();
+        types = controller.getTypes();
         loadUsers();
     }
 
     public void approve(User user) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
         user.setRequestApproved(1);
-        session.update(user);
-        session.getTransaction().commit();
-        session.flush();
-        session.close();
-
+        controller.updateUser(user);
         loadUsers();
-
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "User " + user.getUserName() + " is approved.", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void reject(User user) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-
-        session.delete(user);
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
-
+        controller.deleteUser(user);
         loadUsers();
-
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User " + user.getUserName() + " is rejected", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void delete(User user) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-
-        session.delete(user);
-        session.getTransaction().commit();
-        session.flush();
-        session.close();
-
+        controller.deleteUser(user);
         loadUsers();
-
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User " + user.getUserName() + " is deleted", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
-
     }
 
     private void separateUsers(List<User> users) {
@@ -140,23 +102,13 @@ public class MBAdmin implements Serializable {
     }
 
     private void loadUsers() {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
-        Criteria query = session.createCriteria(User.class);
-        List<User> users = (List<User>) query.list();
-        session.getTransaction().commit();
-
-        separateUsers(users);
-
-        session.flush();
-        session.close();
+        List<User> allUsers = controller.getAllUsers();
+        separateUsers(allUsers);
     }
 
     public void onRowEdit(RowEditEvent event) {
         User u = (User) event.getObject();
-        updateUser(u);
+        controller.updateUser(u);
         FacesMessage msg = new FacesMessage("User Edited", (u.getUserName()));
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
@@ -165,17 +117,4 @@ public class MBAdmin implements Serializable {
         FacesMessage msg = new FacesMessage("Edit Cancelled", ((User) event.getObject()).getUserName());
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
-
-    private void updateUser(User u) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.update(u);
-        session.getTransaction().commit();
-        session.flush();
-        session.close();
-
-        loadUsers();
-    }
-
 }

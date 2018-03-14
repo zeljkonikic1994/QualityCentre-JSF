@@ -20,6 +20,10 @@ public class TestDTO {
     private String name;
     private List<StepDTO> stepList = new ArrayList<>();
 
+    public TestDTO(int testId) {
+        this.testId = testId;
+    }
+
     public int getTestId() {
         return testId;
     }
@@ -70,6 +74,10 @@ public class TestDTO {
 
     public void addStep(StepDTO step) {
         this.stepList.add(step);
+    }
+
+    public void removeStep(StepDTO step) {
+        this.stepList.remove(step);
     }
 
 }

@@ -5,11 +5,13 @@
  */
 package dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ZXNIKIC
  */
-public class StepDTO {
+public class StepDTO implements Serializable{
 
     private int stepId;
     private int testId;
@@ -111,6 +113,11 @@ public class StepDTO {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "StepDTO{" + "stepId=" + stepId + ", testId=" + testId + ", name=" + name + '}';
     }
 
 }

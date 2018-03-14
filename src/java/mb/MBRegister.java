@@ -5,20 +5,16 @@
  */
 package mb;
 
-import db.HibernateUtil;
+import controller.Controller;
 import entities.Type;
 import entities.User;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import javax.inject.Inject;
 
 /**
  *
@@ -28,25 +24,18 @@ import org.hibernate.criterion.Restrictions;
 @RequestScoped
 public class MBRegister {
 
+    @Inject
+    Controller controller;
+
     String name, lastName, username, password, gender, mail, confirmedPassword;
     Type type;
     List<Type> types;
-    
+
     @PostConstruct
-    public void init(){
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
-        Criteria query = session.createCriteria(Type.class);
-        query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        types = (List<Type>) query.list();
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
+    public void init() {
+        types = controller.getTypes();
     }
-    
+
     public String getName() {
         return name;
     }
@@ -119,22 +108,13 @@ public class MBRegister {
         this.types = types;
     }
 
-    
-
     public String register() {
         if (!checkIfAllFieldsAreEntered()) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "You must enter all fields.", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
             return "";
         }
-
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        Criteria query = session.createCriteria(User.class);
-        User user = (User) query.add(Restrictions.eq("userName", username)).uniqueResult();
-        session.getTransaction().commit();
+        User user = controller.getUserWithSpecifiedUserName(username);
 
         if (user != null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username is taken.", null);
@@ -142,9 +122,7 @@ public class MBRegister {
             return "";
         } else {
             if (checkIfPasswordsMatch()) {
-                session.beginTransaction();
-                addNewUser(session);
-
+                addNewUser();
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "User added.", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
                 return "";
@@ -175,9 +153,10 @@ public class MBRegister {
             return false;
         }
     }
-    private void addNewUser(Session session) {
+
+    private void addNewUser() {
         User newUser = new User();
-        newUser.setGender(gender.charAt(0)+"");
+        newUser.setGender(gender.charAt(0) + "");
         newUser.setLastName(lastName);
         newUser.setMail(mail);
         newUser.setName(name);
@@ -185,12 +164,9 @@ public class MBRegister {
         newUser.setRequestApproved(0);
         newUser.setType(type);
         newUser.setUserName(username);
-
-        session.persist(newUser);
-        session.getTransaction().commit();
-
-        session.flush();
-        session.close();
+        
+        controller.saveUser(newUser);
+        
     }
 
 }

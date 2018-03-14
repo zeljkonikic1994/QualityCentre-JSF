@@ -18,19 +18,19 @@
             <h:panelGrid columns="1" border="0">
                 <i id="customheader" class="fa fa-fw fa-car" style="display:none"></i>
                 <h:outputText value="Name: " />
-                <h:inputText value="#{mbTestTreeView2.selectedTest.name}"/>
+                <h:inputText value="#{mbTestTreeView.selectedTest.name}"/>
 
                 <h:outputText value="Date created: " />
-                <h:inputText value="#{mbTestTreeView2.selectedTest.dateCreated}" disabled="true" />
+                <h:inputText value="#{mbTestTreeView.selectedTest.dateCreated}" disabled="true" />
             </h:panelGrid>
 
             <p:spacer width="0" height="30" />
 
-                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestTreeView2.saveTest()}">
+                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestTreeView.saveTest()}">
                         <h:outputText value="Save"></h:outputText>
                     </p:commandLink>
                     <p:spacer width="42" height="10" />
-                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestTreeView2.exitWithoutSaving()}" immediate="true">
+                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestTreeView.exitWithoutSaving()}" immediate="true">
                         <h:outputText value="Cancel"></h:outputText>
                     </p:commandLink>
             <!--<p:spacer width="0" height="30" />-->

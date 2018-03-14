@@ -26,7 +26,6 @@ public class MBLogOut {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         if (session != null) {
             session.removeAttribute("currentUser");
-//            session.invalidate();
             context.getExternalContext().invalidateSession();
         }
         return "index.xhtml?faces-redirect=true";

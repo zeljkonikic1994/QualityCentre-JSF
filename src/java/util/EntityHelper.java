@@ -7,8 +7,11 @@ package util;
 
 import dto.StepDTO;
 import dto.TestDTO;
+import dto.TestSetDTO;
+import entities.SpecificStep;
 import entities.Step;
 import entities.Test;
+import entities.TestSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,4 +68,13 @@ public class EntityHelper {
         }
         return entities;
     }
+
+    public static List<TestSetDTO> convertFromTestSetList(List<TestSet> testSetList) {
+        List<TestSetDTO> dtos = new ArrayList<>();
+        for (TestSet testSet : testSetList) {
+            dtos.add(TestSetConverter.convertFromTestSet(testSet));
+        }
+        return dtos;
+    }
+
 }

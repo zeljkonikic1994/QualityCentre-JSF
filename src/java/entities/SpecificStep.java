@@ -71,6 +71,17 @@ public class SpecificStep implements Serializable {
         this.specificStepPK = specificStepPK;
     }
 
+    public SpecificStep(int stepId, int testSetId, String name, String description, String expected, String folder, TestSet testSet) {
+        this.specificStepPK = new SpecificStepPK(stepId, testSetId);
+        this.name = name;
+        this.description = description;
+        this.expected = expected;
+        this.folder = folder;
+        this.testSet = testSet;
+    }
+
+    
+    
     public SpecificStep(SpecificStepPK specificStepPK, String name, String description, String expected, String folder) {
         this.specificStepPK = specificStepPK;
         this.name = name;
