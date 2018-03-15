@@ -3,26 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package db;
+package dao;
+
+import java.io.Serializable;
 import java.util.List;
-import org.hibernate.Session;
+
 /**
  *
  * @author ZXNIKIC
  */
-public interface Dao<T,ID>{
+public interface DaoInterface <T, Id extends Serializable>{
     
-    public T findById(ID id);
+    public void save(T entity);
     
-    public List<T> findAll();
+    public void update(T entity);
     
-    public T save(T entity);
+    public T findById(Id id);
     
     public void delete(T entity);
     
-    public void flush();
+    public List<T> findAll();
     
-    public void clear();
+    public void deleteAll();
     
-    public void setSession(Session session);
 }

@@ -75,7 +75,7 @@ public class User implements Serializable {
     @Column(name = "RequestApproved")
     private int requestApproved;
     @JoinColumn(name = "Type", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Type type;
 
     public User() {

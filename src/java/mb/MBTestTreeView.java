@@ -46,7 +46,7 @@ public class MBTestTreeView implements Serializable {
     @PostConstruct
     public void init() {
         loadTests();
-        setStepNumbers(allTests);
+//        setStepNumbers(allTests);
         populateTree();
 
         removedSteps = new ArrayList<>();
@@ -134,7 +134,7 @@ public class MBTestTreeView implements Serializable {
         newStep.setExpected("");
         newStep.setName("");
         loadTests();
-        setStepNumbers(allTests);
+//        setStepNumbers(allTests);
         populateTree();
     }
 
@@ -190,7 +190,7 @@ public class MBTestTreeView implements Serializable {
     public void deleteStep(Step s) {
         selectedTest.getStepList().remove(s);
         removedSteps.add(s);
-        setStepNumbers(selectedTest);
+//        setStepNumbers(selectedTest);
     }
 
     private void setStepNumbers(Test selectedTest) {
@@ -204,7 +204,7 @@ public class MBTestTreeView implements Serializable {
     public void addNewStep() {
         Step step = new Step(selectedTest.getStepList().size() + 1, selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
         selectedTest.addStep(step);
-        setStepNumbers(selectedTest);
+//        setStepNumbers(selectedTest);
     }
 
     public void exitWithSaving() {

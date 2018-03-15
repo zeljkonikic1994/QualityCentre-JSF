@@ -76,14 +76,14 @@ public class MBAdmin implements Serializable {
     }
 
     public void reject(User user) {
-        controller.deleteUser(user);
+        controller.deleteUser(user.getUserName());
         loadUsers();
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User " + user.getUserName() + " is rejected", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void delete(User user) {
-        controller.deleteUser(user);
+        controller.deleteUser(user.getUserName());
         loadUsers();
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User " + user.getUserName() + " is deleted", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
