@@ -6,10 +6,8 @@
 package mb;
 
 import controller.Controller;
-import dto.StepDTO;
-import dto.TestDTO;
-import entities.Step;
-import entities.Test;
+import dto.Step;
+import dto.Test;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -27,7 +25,6 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import util.EntityHelper;
 
 /**
  *
@@ -41,10 +38,10 @@ public class MBTestTreeView implements Serializable {
     Controller controller;
     
     private TreeNode root;
-    private TestDTO selectedTest;
-    private List<TestDTO> allTests;
-    private StepDTO newStep;
-    private List<StepDTO> removedSteps;
+    private Test selectedTest;
+    private List<Test> allTests;
+    private Step newStep;
+    private List<Step> removedSteps;
 
     @PostConstruct
     public void init() {
@@ -54,7 +51,7 @@ public class MBTestTreeView implements Serializable {
 
         removedSteps = new ArrayList<>();
 
-        newStep = new StepDTO();
+        newStep = new Step();
         newStep.setDescription("");
         newStep.setExpected("");
         newStep.setName("");
@@ -67,22 +64,20 @@ public class MBTestTreeView implements Serializable {
     }
 
     public void loadTests() {
-        List<Test> testsFromDB = controller.loadTests();
+        this.allTests = controller.getTests();
         if (selectedTest != null) {
-            for (TestDTO test : allTests) {
+            for (Test test : allTests) {
                 if (test.getTestId() == selectedTest.getTestId()) {
                     selectedTest = test;
                 }
             }
         }
-        List<TestDTO> dtos = EntityHelper.convertFromTestList(testsFromDB);
-        this.allTests = dtos;
     }
 
-    private void setStepNumbers(List<TestDTO> testList) {
-        for (TestDTO testDTO : testList) {
+    private void setStepNumbers(List<Test> testList) {
+        for (Test testDTO : testList) {
             int no = 1;
-            for (StepDTO stepDTO : testDTO.getStepList()) {
+            for (Step stepDTO : testDTO.getStepList()) {
                 stepDTO.setStepId(no);
                 no++;
             }
@@ -91,24 +86,24 @@ public class MBTestTreeView implements Serializable {
 
     private void populateTree() {
         root = new DefaultTreeNode("Root", null);
-        for (TestDTO test : allTests) {
+        for (Test test : allTests) {
             TreeNode node = new DefaultTreeNode("test", test, root);
-            for (StepDTO step : test.getStepList()) {
+            for (Step step : test.getStepList()) {
                 TreeNode child = new DefaultTreeNode("step", step, node);
             }
         }
     }
 
     public void onNodeSelect(NodeSelectEvent event) {
-        if (event.getTreeNode().getData() instanceof TestDTO) {
-            this.selectedTest = (TestDTO) event.getTreeNode().getData();
-        } else if (event.getTreeNode().getData() instanceof StepDTO) {
-            this.selectedTest = ((StepDTO) event.getTreeNode().getData()).getTest();
+        if (event.getTreeNode().getData() instanceof Test) {
+            this.selectedTest = (Test) event.getTreeNode().getData();
+        } else if (event.getTreeNode().getData() instanceof Step) {
+            this.selectedTest = ((Step) event.getTreeNode().getData()).getTest();
         }
     }
 
     public void newTest() {
-        selectedTest = new TestDTO();
+        selectedTest = new Test();
         selectedTest.setTestId(0);
         selectedTest.setDateCreated(new Date());
         Map<String, Object> options = new HashMap<String, Object>();
@@ -134,7 +129,7 @@ public class MBTestTreeView implements Serializable {
         selectedTest = null;
         removedSteps = new ArrayList<>();
 
-        newStep = new StepDTO();
+        newStep = new Step();
         newStep.setDescription("");
         newStep.setExpected("");
         newStep.setName("");
@@ -173,9 +168,9 @@ public class MBTestTreeView implements Serializable {
     }
 
     public void onRowEdit(RowEditEvent event) {
-        StepDTO s = (StepDTO) event.getObject();
-        for (TestDTO test : allTests) {
-            for (StepDTO step : test.getStepList()) {
+        Step s = (Step) event.getObject();
+        for (Test test : allTests) {
+            for (Step step : test.getStepList()) {
                 if (step.equals(s)) {
                     step.setName(s.getName());
                     step.setDescription(s.getDescription());
@@ -192,22 +187,22 @@ public class MBTestTreeView implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void deleteStep(StepDTO s) {
+    public void deleteStep(Step s) {
         selectedTest.getStepList().remove(s);
         removedSteps.add(s);
         setStepNumbers(selectedTest);
     }
 
-    private void setStepNumbers(TestDTO selectedTest) {
+    private void setStepNumbers(Test selectedTest) {
         int no = 1;
-        for (StepDTO s : selectedTest.getStepList()) {
+        for (Step s : selectedTest.getStepList()) {
             s.setStepId(no);
             no++;
         }
     }
 
     public void addNewStep() {
-        StepDTO step = new StepDTO(selectedTest.getStepList().size() + 1, selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
+        Step step = new Step(selectedTest.getStepList().size() + 1, selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
         selectedTest.addStep(step);
         setStepNumbers(selectedTest);
     }
@@ -227,27 +222,27 @@ public class MBTestTreeView implements Serializable {
         this.root = root;
     }
 
-    public TestDTO getSelectedTest() {
+    public Test getSelectedTest() {
         return selectedTest;
     }
 
-    public void setSelectedTest(TestDTO selectedTest) {
+    public void setSelectedTest(Test selectedTest) {
         this.selectedTest = selectedTest;
     }
 
-    public List<TestDTO> getAllTests() {
+    public List<Test> getAllTests() {
         return allTests;
     }
 
-    public void setAllTests(List<TestDTO> allTests) {
+    public void setAllTests(List<Test> allTests) {
         this.allTests = allTests;
     }
 
-    public StepDTO getNewStep() {
+    public Step getNewStep() {
         return newStep;
     }
 
-    public void setNewStep(StepDTO newStep) {
+    public void setNewStep(Step newStep) {
         this.newStep = newStep;
     }
 

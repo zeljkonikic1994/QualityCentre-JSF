@@ -5,9 +5,6 @@
  */
 package util;
 
-import dto.StepDTO;
-import dto.TestDTO;
-import dto.TestSetDTO;
 import entities.SpecificStep;
 import entities.Step;
 import entities.Test;
@@ -21,19 +18,19 @@ import java.util.List;
  */
 public class EntityHelper {
 
-    public static List<StepDTO> convertFromStepList(List<Step> stepList) {
-        List<StepDTO> dtos = new ArrayList<>();
+    public static List<dto.Step> convertFromStepList(List<Step> stepList) {
+        List<dto.Step> dtos = new ArrayList<>();
         for (Step step : stepList) {
-            StepDTO dto = StepConverter.convertFrom(step);
+            dto.Step dto = StepConverter.convertFrom(step);
             dto.setTest(TestConverter.convertFrom(step.getTest()));
             dtos.add(dto);
         }
         return dtos;
     }
 
-    public static List<Step> convertToStepList(List<StepDTO> stepList) {
+    public static List<Step> convertToStepList(List<dto.Step> stepList) {
         List<Step> entities = new ArrayList<>();
-        for (StepDTO step : stepList) {
+        for (dto.Step step : stepList) {
             Step entity = StepConverter.convertTo(step);
             entity.setTest(TestConverter.convertTo(step.getTest()));
             entities.add(entity);
@@ -41,12 +38,12 @@ public class EntityHelper {
         return entities;
     }
 
-    public static List<TestDTO> convertFromTestList(List<Test> testList) {
-        List<TestDTO> dtos = new ArrayList<>();
+    public static List<dto.Test> convertFromTestList(List<Test> testList) {
+        List<dto.Test> dtos = new ArrayList<>();
         for (Test test : testList) {
-            TestDTO testDto = TestConverter.convertFrom(test);
+            dto.Test testDto = TestConverter.convertFrom(test);
             for (Step step : test.getStepList()) {
-                StepDTO stepDto = StepConverter.convertFrom(step);
+                dto.Step stepDto = StepConverter.convertFrom(step);
                 stepDto.setTest(testDto);
                 testDto.addStep(stepDto);
             }
@@ -55,11 +52,11 @@ public class EntityHelper {
         return dtos;
     }
 
-    public static List<Test> convertToTestList(List<TestDTO> testList) {
+    public static List<Test> convertToTestList(List<dto.Test> testList) {
         List<Test> entities = new ArrayList<>();
-        for (TestDTO testDto : testList) {
+        for (dto.Test testDto : testList) {
             Test test = TestConverter.convertTo(testDto);
-            for (StepDTO stepDTO : testDto.getStepList()) {
+            for (dto.Step stepDTO : testDto.getStepList()) {
                 Step step = StepConverter.convertTo(stepDTO);
                 step.setTest(test);
                 test.addStep(step);
@@ -69,8 +66,8 @@ public class EntityHelper {
         return entities;
     }
 
-    public static List<TestSetDTO> convertFromTestSetList(List<TestSet> testSetList) {
-        List<TestSetDTO> dtos = new ArrayList<>();
+    public static List<dto.TestSet> convertFromTestSetList(List<TestSet> testSetList) {
+        List<dto.TestSet> dtos = new ArrayList<>();
         for (TestSet testSet : testSetList) {
             dtos.add(TestSetConverter.convertFromTestSet(testSet));
         }

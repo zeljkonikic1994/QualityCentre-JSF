@@ -6,12 +6,10 @@
 package mb;
 
 import controller.Controller;
-import dto.FolderDTO;
-import dto.StepDTO;
-import dto.TestDTO;
-import entities.Test;
-import entities.TestSet;
-import dto.TestSetDTO;
+import dto.Folder;
+import dto.Step;
+import dto.Test;
+import dto.TestSet;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -28,7 +26,6 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import util.EntityHelper;
 
 /**
  *
@@ -47,11 +44,11 @@ public class MBTestSetTreeView implements Serializable {
     private TreeNode selectedSourceNode;
     private TreeNode selectedDestinationNode;
 
-    private TestSetDTO selectedSet;
-    private List<TestSetDTO> allSets;
-    private List<TestDTO> sourceList;
+    private TestSet selectedSet;
+    private List<TestSet> allSets;
+    private List<Test> sourceList;
 
-    private List<StepDTO> stepsForRemoval;
+    private List<Step> stepsForRemoval;
 
     @PostConstruct
     public void init() {
@@ -67,13 +64,9 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void loadSets() {
-        
-        List<TestSet> testSets = controller.loadSets();
-        
-        this.allSets = EntityHelper.convertFromTestSetList(testSets);
-        
+        this.allSets = controller.getSets();
         if (selectedSet != null) {
-            for (TestSetDTO set : allSets) {
+            for (TestSet set : allSets) {
                 if(set.getTestSetId() == selectedSet.getTestSetId()){
                     selectedSet = set;
                 }
@@ -83,7 +76,7 @@ public class MBTestSetTreeView implements Serializable {
 
     private void populateTree() {
         root = new DefaultTreeNode("Root", null);
-        for (TestSetDTO testSet : allSets) {
+        for (TestSet testSet : allSets) {
             TreeNode node = new DefaultTreeNode(testSet, root);
         }
     }
@@ -97,11 +90,11 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void onNodeSelect(NodeSelectEvent event) {
-        this.selectedSet = (TestSetDTO) event.getTreeNode().getData();
+        this.selectedSet = (TestSet) event.getTreeNode().getData();
     }
 
     public void newSet() {
-        selectedSet = new TestSetDTO();
+        selectedSet = new TestSet();
         selectedSet.setTestSetId(0);
         selectedSet.setDateCreated(new Date());
         selectedSet.setDateModified(new Date());
@@ -178,8 +171,7 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void loadTests() {
-        List<Test> tests = controller.loadTests();
-        this.sourceList = EntityHelper.convertFromTestList(tests);
+        this.sourceList = controller.getTests();
     }
 
     private void populateTrees() {
@@ -189,12 +181,12 @@ public class MBTestSetTreeView implements Serializable {
 
     private void populateSourceTree() {
         sourceRoot = new DefaultTreeNode("Root", null);
-        for (TestDTO t : sourceList) {
+        for (Test t : sourceList) {
             if (t.getStepList().isEmpty()) {
                 continue;
             }
             TreeNode node = new DefaultTreeNode(t, sourceRoot);
-            for (StepDTO s : t.getStepList()) {
+            for (Step s : t.getStepList()) {
                 TreeNode child = new DefaultTreeNode(s, node);
             }
             node.setExpanded(true);
@@ -205,10 +197,10 @@ public class MBTestSetTreeView implements Serializable {
         destinationRoot = new DefaultTreeNode("Root", null);
         TreeNode node = new DefaultTreeNode(selectedSet, destinationRoot);
         node.setExpanded(true);
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        for (Folder folder : selectedSet.getFolderList()) {
             TreeNode folderNode = new DefaultTreeNode("folder", folder, node);
             folderNode.setExpanded(true);
-            for (StepDTO step : folder.getStepList()) {
+            for (Step step : folder.getStepList()) {
                 TreeNode stepNode = new DefaultTreeNode("step", step, folderNode);
             }
         }
@@ -256,29 +248,29 @@ public class MBTestSetTreeView implements Serializable {
         TreeNode dropNode = event.getDropNode();
         Object dropData = dropNode.getData();
         boolean dropped = false;
-        if (dragData instanceof TestDTO) {
-            if (dropData instanceof TestSetDTO) {
+        if (dragData instanceof Test) {
+            if (dropData instanceof TestSet) {
                 dropTestToTestSet(dragData);
                 dropped = true;
-            } else if (dropData instanceof FolderDTO) {
+            } else if (dropData instanceof Folder) {
                 dropTestToFolder(dragData, dropData);
                 dropped = true;
-            } else if (dropData instanceof StepDTO) {
+            } else if (dropData instanceof Step) {
                 dropTestToStep(dragData, dropData);
                 dropped = true;
             }
-        } else if (dragData instanceof StepDTO) {
-            if (dropData instanceof TestSetDTO) {
+        } else if (dragData instanceof Step) {
+            if (dropData instanceof TestSet) {
                 dropStepToTestSet(dragData);
                 dropped = true;
-            } else if (dropData instanceof FolderDTO) {
+            } else if (dropData instanceof Folder) {
                 dropStepToFolder(dragData, dropData);
                 dropped = true;
-            } else if (dropData instanceof StepDTO) {
+            } else if (dropData instanceof Step) {
                 dropStepToStep(dragData, dropData);
                 dropped = true;
             }
-        } else if (dragData instanceof FolderDTO) {
+        } else if (dragData instanceof Folder) {
             populateTrees();
         }
         if (dropped) {
@@ -287,9 +279,9 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void dropStepToStep(Object dragData, Object dropData) {
-        StepDTO dragStep = (StepDTO) dragData;
-        StepDTO dropStep = (StepDTO) dropData;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        Step dragStep = (Step) dragData;
+        Step dropStep = (Step) dropData;
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.getStepList().contains(dropStep)) {
                 folder.addStep(dragStep);
                 removeFromSource(dragStep);
@@ -298,13 +290,13 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void dropStepToFolder(Object dragData, Object dropData) {
-        FolderDTO dropFolder = (FolderDTO) dropData;
-        StepDTO dragStep = (StepDTO) dragData;
+        Folder dropFolder = (Folder) dropData;
+        Step dragStep = (Step) dragData;
         if (dropFolder.getStepList().contains(dragStep)) {
             return;
         }
-        FolderDTO forRemoval = null;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        Folder forRemoval = null;
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.equals(dropFolder)) {
                 System.out.println("Found the same folder "+folder);
                 folder.addStep(dragStep);
@@ -323,17 +315,17 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void dropTestToTestSet(Object dragData) {
-        TestDTO dragTest = (TestDTO) dragData;
-        FolderDTO folder = new FolderDTO(dragTest.getName());
+        Test dragTest = (Test) dragData;
+        Folder folder = new Folder(dragTest.getName());
         folder.setStepList(dragTest.getStepList());
-        selectedSet.addFolderDto(folder);
+        selectedSet.addFolder(folder);
         removeFromSource(dragTest);
     }
 
     private void dropTestToFolder(Object dragData, Object dropData) {
-        TestDTO dragTest = (TestDTO) dragData;
-        FolderDTO dropFolder = (FolderDTO) dropData;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        Test dragTest = (Test) dragData;
+        Folder dropFolder = (Folder) dropData;
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.equals(dropFolder)) {
                 folder.addSteps(dragTest.getStepList());
                 removeFromSource(dragTest);
@@ -342,10 +334,10 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void dropTestToStep(Object dragData, Object dropData) {
-        StepDTO dropStep = (StepDTO) dropData;
-        TestDTO dragTest = (TestDTO) dragData;
+        Step dropStep = (Step) dropData;
+        Test dragTest = (Test) dragData;
 
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.getStepList().contains(dropStep)) {
                 folder.addSteps(dragTest.getStepList());
                 removeFromSource(dragTest);
@@ -354,11 +346,11 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void dropStepToTestSet(Object dragData) {
-        StepDTO step = (StepDTO) dragData;
+        Step step = (Step) dragData;
 
         int newFolderCount = countNewFolders();
         System.out.println("newFolderCount - " + newFolderCount);
-        FolderDTO folder = new FolderDTO();
+        Folder folder = new Folder();
 
         if (newFolderCount > 0) {
             folder.setName("New_folder_" + (newFolderCount + 1));
@@ -366,14 +358,14 @@ public class MBTestSetTreeView implements Serializable {
             folder.setName("New_folder");
         }
         folder.addStep(step);
-        selectedSet.addFolderDto(folder);
+        selectedSet.addFolder(folder);
         if (!removeFromSource(step)) {
             removeFromDestination(step, folder);
         }
     }
 
-    private boolean removeFromSource(StepDTO dragStep) {
-        for (TestDTO test : sourceList) {
+    private boolean removeFromSource(Step dragStep) {
+        for (Test test : sourceList) {
             if (test.getStepList().contains(dragStep)) {
                 test.removeStep(dragStep);
                 return true;
@@ -382,9 +374,9 @@ public class MBTestSetTreeView implements Serializable {
         return false;
     }
 
-    private void removeFromDestination(StepDTO step, FolderDTO newFolder) {
-        FolderDTO forRemoval = null;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+    private void removeFromDestination(Step step, Folder newFolder) {
+        Folder forRemoval = null;
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.equals(newFolder)) {
                 continue;
             }
@@ -402,7 +394,7 @@ public class MBTestSetTreeView implements Serializable {
 
     private int countNewFolders() {
         int counter = 0;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.getName().contains("New_folder")) {
                 counter++;
             }
@@ -410,7 +402,7 @@ public class MBTestSetTreeView implements Serializable {
         return counter;
     }
 
-    private void removeFromSource(TestDTO dragTest) {
+    private void removeFromSource(Test dragTest) {
         sourceList.remove(dragTest);
     }
 
@@ -437,51 +429,51 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void delete() {
-        if (selectedDestinationNode.getData() instanceof StepDTO) {
-            StepDTO selectedDestinationStep = (StepDTO) selectedDestinationNode.getData();
+        if (selectedDestinationNode.getData() instanceof Step) {
+            Step selectedDestinationStep = (Step) selectedDestinationNode.getData();
             removeFromDestination(selectedDestinationStep);
             addToSource(selectedDestinationStep);
-        } else if (selectedDestinationNode.getData() instanceof FolderDTO) {
-            FolderDTO selectedDestinationFolder = (FolderDTO) selectedDestinationNode.getData();
+        } else if (selectedDestinationNode.getData() instanceof Folder) {
+            Folder selectedDestinationFolder = (Folder) selectedDestinationNode.getData();
             removeFromDestination(selectedDestinationFolder);
             addToSource(selectedDestinationFolder);
         }
         populateTrees();
     }
 
-    private void addToSource(FolderDTO selectedDestinationFolder) {
-        for (StepDTO step : selectedDestinationFolder.getStepList()) {
+    private void addToSource(Folder selectedDestinationFolder) {
+        for (Step step : selectedDestinationFolder.getStepList()) {
             addToSource(step);
         }
     }
 
-    private void removeFromDestination(FolderDTO selectedDestinationFolder) {
+    private void removeFromDestination(Folder selectedDestinationFolder) {
         selectedSet.removeFolder(selectedDestinationFolder);
 
     }
 
-    private void addToSource(StepDTO selectedDestinationStep) {
+    private void addToSource(Step selectedDestinationStep) {
         if (selectedDestinationStep.getTest() == null) {
             stepsForRemoval.add(selectedDestinationStep);
             return;
         }
-        for (TestDTO t : sourceList) {
+        for (Test t : sourceList) {
             if (t.getTestId() == selectedDestinationStep.getTest().getTestId()) {
                 t.addStep(selectedDestinationStep);
                 return;
             }
         }
-        TestDTO t = new TestDTO(selectedDestinationStep.getTest().getTestId());
+        Test t = new Test(selectedDestinationStep.getTest().getTestId());
         t.setName(selectedDestinationStep.getTest().getName());
-        List<StepDTO> stepList = new ArrayList<>();
+        List<Step> stepList = new ArrayList<>();
         stepList.add(selectedDestinationStep);
         t.setStepList(stepList);
         sourceList.add(t);
     }
 
-    private void removeFromDestination(StepDTO selectedDestinationStep) {
-        FolderDTO forRemoval = null;
-        for (FolderDTO folder : selectedSet.getFolderDtoList()) {
+    private void removeFromDestination(Step selectedDestinationStep) {
+        Folder forRemoval = null;
+        for (Folder folder : selectedSet.getFolderList()) {
             if (folder.getStepList().contains(selectedDestinationStep)) {
                 folder.removeStep(selectedDestinationStep);
             }
@@ -494,35 +486,35 @@ public class MBTestSetTreeView implements Serializable {
         }
     }
 
-    public TestSetDTO getSelectedSet() {
+    public TestSet getSelectedSet() {
         return selectedSet;
     }
 
-    public void setSelectedSet(TestSetDTO selectedSet) {
+    public void setSelectedSet(TestSet selectedSet) {
         this.selectedSet = selectedSet;
     }
 
-    public List<TestSetDTO> getAllSets() {
+    public List<TestSet> getAllSets() {
         return allSets;
     }
 
-    public void setAllSets(List<TestSetDTO> allSets) {
+    public void setAllSets(List<TestSet> allSets) {
         this.allSets = allSets;
     }
 
-    public List<TestDTO> getSourceList() {
+    public List<Test> getSourceList() {
         return sourceList;
     }
 
-    public void setSourceList(List<TestDTO> sourceList) {
+    public void setSourceList(List<Test> sourceList) {
         this.sourceList = sourceList;
     }
 
-    public List<StepDTO> getStepsForRemoval() {
+    public List<Step> getStepsForRemoval() {
         return stepsForRemoval;
     }
 
-    public void setStepsForRemoval(List<StepDTO> stepsForRemoval) {
+    public void setStepsForRemoval(List<Step> stepsForRemoval) {
         this.stepsForRemoval = stepsForRemoval;
     }
 

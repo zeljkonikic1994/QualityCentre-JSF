@@ -6,9 +6,6 @@
 package controller;
 
 import db.HibernateUtil;
-import dto.StepDTO;
-import dto.TestDTO;
-import dto.TestSetDTO;
 import entities.Step;
 import entities.Test;
 import entities.TestSet;
@@ -133,13 +130,13 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public List<Test> loadTests() {
+    private static List<Test> loadTests() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
         Query query = session.getNamedQuery("Test.findAll");
-        List<Test> testList = query.list();
+        List<entities.Test> testList = query.list();
         session.getTransaction().commit();
 
         session.flush();
@@ -148,7 +145,7 @@ public class Controller implements Serializable {
         return testList;
     }
 
-    public void saveTest(TestDTO testDTO) {
+    public void saveTest(dto.Test testDTO) {
         Test testForDB = TestConverter.convertTo(testDTO);
 
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -162,7 +159,7 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void saveSteps(List<StepDTO> stepList) {
+    public void saveSteps(List<dto.Step> stepList) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
@@ -176,13 +173,12 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void deleteStepList(List<StepDTO> removedSteps) {
+    public void deleteStepList(List<dto.Step> removedSteps) {
         List<Step> listForRemoval = EntityHelper.convertToStepList(removedSteps);
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
         for (Step step : listForRemoval) {
-            System.out.println("Deleting step " + step);
             session.delete(step);
         }
 
@@ -191,7 +187,7 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void deleteTest(TestDTO selectedTest) {
+    public void deleteTest(dto.Test selectedTest) {
         Test test = TestConverter.convertTo(selectedTest);
         test.setStepList(EntityHelper.convertToStepList(selectedTest.getStepList()));
 
@@ -207,7 +203,7 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public List<TestSet> loadSets() {
+    private static List<TestSet> loadSets() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
@@ -222,7 +218,7 @@ public class Controller implements Serializable {
         return testSetList;
     }
 
-    public void saveSet(TestSetDTO selectedSet) {
+    public void saveSet(dto.TestSet selectedSet) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -232,7 +228,7 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void deleteSet(TestSetDTO selectedSet) {
+    public void deleteSet(dto.TestSet selectedSet) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
@@ -244,11 +240,11 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void deleteSpecificStepList(List<StepDTO> stepsForRemoval) {
+    public void deleteSpecificStepList(List<dto.Step> stepsForRemoval) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        for (StepDTO step : stepsForRemoval) {
+        for (dto.Step step : stepsForRemoval) {
             String sql = "DELETE FROM specificstep where id='" + step.getStepId() + "' and test_set_id='" + step.getTestId() + "'";
             session.createSQLQuery(sql).executeUpdate();
         }
@@ -257,7 +253,7 @@ public class Controller implements Serializable {
         session.close();
     }
 
-    public void updateSet(TestSetDTO selectedSet) {
+    public void updateSet(dto.TestSet selectedSet) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -265,6 +261,14 @@ public class Controller implements Serializable {
         session.getTransaction().commit();
         session.flush();
         session.close();
+    }
+
+    public List<dto.Test> getTests() {
+        return EntityHelper.convertFromTestList(loadTests());
+    }
+
+    public List<dto.TestSet> getSets() {
+        return EntityHelper.convertFromTestSetList(loadSets());
     }
 
 }

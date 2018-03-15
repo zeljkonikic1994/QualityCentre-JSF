@@ -5,8 +5,6 @@
  */
 package util;
 
-import dto.StepDTO;
-import entities.SpecificStep;
 import entities.Step;
 import entities.StepPK;
 
@@ -16,11 +14,11 @@ import entities.StepPK;
  */
 public class StepConverter {
 
-    public static StepDTO convertFrom(Step step) {
-        return new StepDTO(step.getStepPK().getStepId(), step.getStepPK().getTestId(), step.getName(), step.getDescription(), step.getExpected());
+    public static dto.Step convertFrom(Step step) {
+        return new dto.Step(step.getStepPK().getStepId(), step.getStepPK().getTestId(), step.getName(), step.getDescription(), step.getExpected());
     }
 
-    public static Step convertTo(StepDTO step) {
+    public static Step convertTo(dto.Step step) {
         return new Step(new StepPK(step.getStepId(), step.getTestId()), step.getName(), step.getDescription(), step.getExpected());
     }
 }
