@@ -5,7 +5,6 @@
  */
 package util;
 
-import entities.SpecificStep;
 import entities.Step;
 import entities.Test;
 import entities.TestSet;
