@@ -37,7 +37,7 @@ public class MBTestSetTreeView implements Serializable {
 
     @Inject
     Controller controller;
-    
+
     private TreeNode root;
     private TreeNode sourceRoot;
     private TreeNode destinationRoot;
@@ -67,7 +67,7 @@ public class MBTestSetTreeView implements Serializable {
         this.allSets = controller.getSets();
         if (selectedSet != null) {
             for (TestSet set : allSets) {
-                if(set.getTestSetId() == selectedSet.getTestSetId()){
+                if (set.getTestSetId() == selectedSet.getTestSetId()) {
                     selectedSet = set;
                 }
             }
@@ -298,9 +298,9 @@ public class MBTestSetTreeView implements Serializable {
         Folder forRemoval = null;
         for (Folder folder : selectedSet.getFolderList()) {
             if (folder.equals(dropFolder)) {
-                System.out.println("Found the same folder "+folder);
+                System.out.println("Found the same folder " + folder);
                 folder.addStep(dragStep);
-                System.out.println("Added a step "+dragStep);
+                System.out.println("Added a step " + dragStep);
                 if (!removeFromSource(dragStep)) {
                     System.out.println("couldn't remove from source");
                     forRemoval = folder;
@@ -412,15 +412,11 @@ public class MBTestSetTreeView implements Serializable {
 
     public void saveTestSet() {
 //        selectedSet.setDateModified(new Date());
-        deleteStepsForRemoval();
+        controller.deleteSpecificStepList(stepsForRemoval);
         controller.updateSet(selectedSet);
-        
+
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
-    }
-
-    private void deleteStepsForRemoval() {
-        controller.deleteSpecificStepList(stepsForRemoval);
     }
 
     public void exitWithoutSaving() {

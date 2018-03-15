@@ -97,7 +97,8 @@ public class StepDao implements DaoInterface<Step, StepPK> {
         }
     }
 
-    void saveOrUpdate(Step step) {
+    @Override
+    public void saveOrUpdate(Step step) {
         getCurrentSession().saveOrUpdate(step);
     }
 

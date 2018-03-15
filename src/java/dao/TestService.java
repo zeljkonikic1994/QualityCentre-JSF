@@ -45,7 +45,6 @@ public class TestService {
     public void delete(int id){
         testDao.openCurrentSessionWithTransaction();
         Test test = testDao.findById(id);
-        System.out.println("TEST "+test );
         testDao.delete(test);
         testDao.closeCurrentSessionwithTransaction();
     }
@@ -67,5 +66,9 @@ public class TestService {
         return testDao;
     }
     
-    
+     public void saveOrUpdate(Test entity){
+        testDao.openCurrentSessionWithTransaction();
+        testDao.saveOrUpdate(entity);
+        testDao.closeCurrentSessionwithTransaction();
+    }
 }

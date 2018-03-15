@@ -5,7 +5,6 @@
  */
 package dao;
 
-import dao.DaoInterface;
 import db.HibernateUtil;
 import entities.Type;
 import java.util.List;
@@ -27,11 +26,11 @@ public class TypeDao implements DaoInterface<Type, Integer> {
     public TypeDao() {
     }
 
-    public Session openCurrentSession(){
+    public Session openCurrentSession() {
         currentSession = HibernateUtil.getSessionFactory().openSession();
         return currentSession;
     }
-    
+
     public Session openCurrentSessionWithTransaction() {
         currentSession = HibernateUtil.getSessionFactory().openSession();
         currentTransaction = currentSession.beginTransaction();
@@ -62,7 +61,7 @@ public class TypeDao implements DaoInterface<Type, Integer> {
     public void setCurrentTransaction(Transaction currentTransaction) {
         this.currentTransaction = currentTransaction;
     }
-    
+
     @Override
     public void save(Type entity) {
         getCurrentSession().save(entity);
@@ -104,4 +103,8 @@ public class TypeDao implements DaoInterface<Type, Integer> {
         return type;
     }
 
+    @Override
+    public void saveOrUpdate(Type entity) {
+        getCurrentSession().saveOrUpdate(entity);
+    }
 }

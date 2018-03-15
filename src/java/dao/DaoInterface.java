@@ -16,6 +16,8 @@ public interface DaoInterface <T, Id extends Serializable>{
     
     public void save(T entity);
     
+    public void saveOrUpdate(T entity);
+    
     public void update(T entity);
     
     public T findById(Id id);

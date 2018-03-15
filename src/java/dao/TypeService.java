@@ -71,4 +71,9 @@ public class TypeService {
         return typeDao;
     }
 
+    public void saveOrUpdate(Type entity) {
+        typeDao.openCurrentSessionWithTransaction();
+        typeDao.saveOrUpdate(entity);
+        typeDao.closeCurrentSessionwithTransaction();
+    }
 }

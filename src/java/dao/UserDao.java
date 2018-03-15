@@ -94,5 +94,10 @@ public class UserDao implements DaoInterface<User, String> {
             delete(user);
         }
     }
+    
+    @Override
+    public void saveOrUpdate(User entity) {
+        getCurrentSession().saveOrUpdate(entity);
+    }
 
 }

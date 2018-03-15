@@ -62,4 +62,9 @@ public class UserService {
         return userDao;
     }
     
+    public void saveOrUpdate(User entity){
+        userDao.openCurrentSessionWithTransaction();
+        userDao.saveOrUpdate(entity);
+        userDao.closeCurrentSessionwithTransaction();
+    }
 }
