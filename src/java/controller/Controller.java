@@ -5,12 +5,12 @@
  */
 package controller;
 
-import dao.SpecificStepService;
 import dao.TestService;
 import dao.TestSetService;
 import dao.TypeService;
 import dao.UserService;
-import entities.SpecificStep;
+import dto.Folder;
+import dto.Step;
 import entities.Test;
 import entities.TestSet;
 import java.io.Serializable;
@@ -30,102 +30,99 @@ import util.TestSetConverter;
 @Named("Controller")
 @ApplicationScoped
 public class Controller implements Serializable {
-    
+
     public Type getTypeByName(String name) {
         TypeService typeService = new TypeService();
         Type type = typeService.findByName(name);
         return type;
     }
-    
+
     public User getUserWithSpecifiedUserName(String username) {
         UserService userService = new UserService();
         User user = userService.findById(username);
         return user;
     }
-    
+
     public List<Type> getTypes() {
         TypeService typeService = new TypeService();
         List<Type> types = typeService.findAll();
         return types;
     }
-    
+
     public void saveUser(User newUser) {
         UserService userService = new UserService();
         userService.save(newUser);
     }
-    
+
     public void updateUser(User user) {
         UserService userService = new UserService();
         userService.update(user);
     }
-    
+
     public List<User> getAllUsers() {
         UserService userService = new UserService();
         List<User> users = userService.findAll();
         return users;
     }
-    
+
     public void deleteUser(String username) {
         UserService userService = new UserService();
         userService.delete(username);
     }
-    
+
     public List<dto.Test> getTests() {
         return EntityHelper.convertFromTestList(loadTests());
     }
-    
+
     private static List<Test> loadTests() {
         TestService testService = new TestService();
         List<entities.Test> testList = testService.findAll();
         return testList;
     }
-    
+
     public void saveTest(dto.Test testDTO) {
         TestService testService = new TestService();
         testService.save(TestConverter.convertTo(testDTO));
     }
+
     public void updateTest(dto.Test testDTO) {
         TestService testService = new TestService();
         testService.update(TestConverter.convertTo(testDTO));
     }
-    
+
     public void deleteTest(dto.Test selectedTest) {
         TestService testService = new TestService();
         testService.delete(selectedTest.getTestId());
     }
-    
+
     public List<dto.TestSet> getSets() {
         return EntityHelper.convertFromTestSetList(loadSets());
     }
-    
+
     private static List<TestSet> loadSets() {
         TestSetService testSetService = new TestSetService();
         List<TestSet> testSetList = testSetService.findAll();
         return testSetList;
     }
-    
+
     public void saveSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.save(TestSetConverter.convertToTestSet(selectedSet));
     }
-    
+
     public void deleteSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.delete(selectedSet.getTestSetId());
     }
-    
-    public void deleteSpecificStepList(List<dto.Step> stepsForRemoval) {
-        SpecificStepService specificStepService = new SpecificStepService();
-        for (dto.Step step : stepsForRemoval) {
-            specificStepService.deleteTemp(step.getStepId(), step.getTestId());
-        }
-    }
-    
+
     public void updateSet(dto.TestSet selectedSet) {
-        SpecificStepService specificStepService = new SpecificStepService();
-        for (SpecificStep specificStep : TestSetConverter.convertToTestSet(selectedSet).getSpecificStepList()) {
-            specificStepService.saveOrUpdate(specificStep);
+        TestSetService testSetService = new TestSetService();
+        for (Folder folder : selectedSet.getFolderList()) {
+            for (Step step : folder.getStepList()) {
+                System.out.println(step);
+            }
         }
+        testSetService.update(TestSetConverter.convertToTestSet(selectedSet));
     }
-    
+
 }

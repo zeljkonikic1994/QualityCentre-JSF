@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @author ZXNIKIC
  */
-public class Step implements Serializable{
+public class Step implements Serializable {
 
     private int stepId;
     private int testId;
@@ -19,7 +19,9 @@ public class Step implements Serializable{
     private String description;
     private String expected;
     private Test test;
+    private int statusId = 3;
     private int no;
+    
     
     public Step(int stepId, int testId, String name, String description, String expected, Test test) {
         this.stepId = stepId;
@@ -36,6 +38,15 @@ public class Step implements Serializable{
         this.name = name;
         this.description = description;
         this.expected = expected;
+    }
+
+    public Step(int stepId, int testId, String name, String description, String expected, int statusId) {
+        this.stepId = stepId;
+        this.testId = testId;
+        this.name = name;
+        this.description = description;
+        this.expected = expected;
+        this.statusId = statusId;
     }
 
     public Step() {
@@ -119,6 +130,14 @@ public class Step implements Serializable{
     @Override
     public String toString() {
         return "StepDTO{" + "stepId=" + stepId + ", testId=" + testId + ", name=" + name + '}';
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 
     public int getNo() {

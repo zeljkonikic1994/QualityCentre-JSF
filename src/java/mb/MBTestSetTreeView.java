@@ -48,12 +48,10 @@ public class MBTestSetTreeView implements Serializable {
     private List<TestSet> allSets;
     private List<Test> sourceList;
 
-    private List<Step> stepsForRemoval;
 
     @PostConstruct
     public void init() {
         loadSets();
-        stepsForRemoval = new ArrayList<>();
         populateTree();
     }
 
@@ -164,7 +162,6 @@ public class MBTestSetTreeView implements Serializable {
 
     private void prepareDialog() {
         loadSets();
-        stepsForRemoval = new ArrayList<>();
         populateTree();
         loadTests();
         populateTrees();
@@ -411,10 +408,7 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void saveTestSet() {
-//        selectedSet.setDateModified(new Date());
-        controller.deleteSpecificStepList(stepsForRemoval);
         controller.updateSet(selectedSet);
-
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -450,7 +444,6 @@ public class MBTestSetTreeView implements Serializable {
 
     private void addToSource(Step selectedDestinationStep) {
         if (selectedDestinationStep.getTest() == null) {
-            stepsForRemoval.add(selectedDestinationStep);
             return;
         }
         for (Test t : sourceList) {
@@ -506,12 +499,5 @@ public class MBTestSetTreeView implements Serializable {
         this.sourceList = sourceList;
     }
 
-    public List<Step> getStepsForRemoval() {
-        return stepsForRemoval;
-    }
-
-    public void setStepsForRemoval(List<Step> stepsForRemoval) {
-        this.stepsForRemoval = stepsForRemoval;
-    }
-
+    
 }

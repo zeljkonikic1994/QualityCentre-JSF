@@ -6,10 +6,15 @@
 package util;
 
 import dto.Folder;
+import entities.CompletionStatus;
 import entities.SpecificStep;
 import entities.TestSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -21,13 +26,14 @@ public class TestSetConverter {
         dto.TestSet dto = new dto.TestSet(testSet.getId(), testSet.getName(), testSet.getDateCreated(), testSet.getDateModified());
 
         List<Folder> folderList = new ArrayList<>();
-        for (SpecificStep ss : testSet.getSpecificStepList()) {
-            Folder folder = findFolderByName(folderList, ss.getFolder());
+        for (Map.Entry<Integer, SpecificStep> entry : testSet.getSteps().entrySet()) {
+            Folder folder = findFolderByName(folderList, entry.getValue().getFolder());
             if (folder == null) {
-                folder = new Folder(ss.getFolder());
+                folder = new Folder(entry.getValue().getFolder());
                 folderList.add(folder);
             }
-            dto.Step stepDto = new dto.Step(ss.getSpecificStepPK().getId(), ss.getSpecificStepPK().getTestSetId(), ss.getName(), ss.getDescription(), ss.getExpected());
+            dto.Step stepDto = new dto.Step(entry.getKey(), testSet.getId(), entry.getValue().getName(), entry.getValue().getDescription(), entry.getValue().getExpected());
+            stepDto.setStatusId(entry.getValue().getCompletionStatus().getId());
             stepDto.setTest(null);
             folder.addStep(stepDto);
         }
@@ -46,11 +52,17 @@ public class TestSetConverter {
 
     public static TestSet convertToTestSet(dto.TestSet dto) {
         TestSet entity = new TestSet(dto.getTestSetId(), dto.getName(), dto.getDateCreated(), dto.getDateModified());
-        int stepCount = 1;
         for (Folder folder : dto.getFolderList()) {
             for (dto.Step step : folder.getStepList()) {
-                SpecificStep ss = new SpecificStep(stepCount++, dto.getTestSetId(), step.getName(), step.getDescription(), step.getExpected(), folder.getName(), entity);
-                entity.addSpecificStep(ss);
+                SpecificStep ss = new SpecificStep(step.getName(), step.getDescription(), step.getExpected(), folder.getName());
+                ss.setCompletionStatus(new CompletionStatus(step.getStatusId(), ""));
+                if (!entity.getSteps().containsKey(step.getStepId())) {
+                    entity.addStep(step.getStepId(), ss);
+                } else {
+                    ArrayList<Integer> ints = new ArrayList<>(entity.getSteps().keySet());
+                    Collections.sort(ints, (one, two) -> one < two ? -1 : one == two ? 0 : 1);
+                    entity.addStep(ints.get(ints.size()-1)+1, ss);
+                }
             }
         }
         return entity;

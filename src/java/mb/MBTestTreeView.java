@@ -246,7 +246,6 @@ public class MBTestTreeView implements Serializable {
         } else {
             Collections.sort(selectedTest.getStepList(), (step1, step2) -> step1.getStepId() < step2.getStepId() ? -1 : step1.getStepId() == step2.getStepId() ? 0 : 1);
             return selectedTest.getStepList().get(selectedTest.getStepList().size() - 1).getStepId() + 1;
-
         }
     }
 }
