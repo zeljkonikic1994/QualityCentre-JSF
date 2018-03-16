@@ -11,7 +11,7 @@ import dto.Test;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,20 +36,16 @@ public class MBTestTreeView implements Serializable {
 
     @Inject
     Controller controller;
-    
+
     private TreeNode root;
     private Test selectedTest;
     private List<Test> allTests;
     private Step newStep;
-    private List<Step> removedSteps;
 
     @PostConstruct
     public void init() {
         loadTests();
-//        setStepNumbers(allTests);
         populateTree();
-
-        removedSteps = new ArrayList<>();
 
         newStep = new Step();
         newStep.setDescription("");
@@ -74,21 +70,13 @@ public class MBTestTreeView implements Serializable {
         }
     }
 
-    private void setStepNumbers(List<Test> testList) {
-        for (Test testDTO : testList) {
-            int no = 1;
-            for (Step stepDTO : testDTO.getStepList()) {
-                stepDTO.setStepId(no);
-                no++;
-            }
-        }
-    }
-
     private void populateTree() {
         root = new DefaultTreeNode("Root", null);
         for (Test test : allTests) {
             TreeNode node = new DefaultTreeNode("test", test, root);
+            int no = 1;
             for (Step step : test.getStepList()) {
+                step.setNo(no++);
                 TreeNode child = new DefaultTreeNode("step", step, node);
             }
         }
@@ -127,14 +115,11 @@ public class MBTestTreeView implements Serializable {
 
     private void clearFields() {
         selectedTest = null;
-        removedSteps = new ArrayList<>();
-
         newStep = new Step();
         newStep.setDescription("");
         newStep.setExpected("");
         newStep.setName("");
         loadTests();
-//        setStepNumbers(allTests);
         populateTree();
     }
 
@@ -145,7 +130,6 @@ public class MBTestTreeView implements Serializable {
 
     public void viewTest() {
         if (selectedTest != null) {
-
             Map<String, Object> options = new HashMap<String, Object>();
             options.put("resizable", true);
             options.put("modal", true);
@@ -189,27 +173,24 @@ public class MBTestTreeView implements Serializable {
 
     public void deleteStep(Step s) {
         selectedTest.getStepList().remove(s);
-        removedSteps.add(s);
-//        setStepNumbers(selectedTest);
+        setStepNumbers(selectedTest);
     }
 
     private void setStepNumbers(Test selectedTest) {
         int no = 1;
         for (Step s : selectedTest.getStepList()) {
-            s.setStepId(no);
-            no++;
+            s.setNo(no++);
         }
     }
 
     public void addNewStep() {
-        Step step = new Step(selectedTest.getStepList().size() + 1, selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
+        Step step = new Step(addNewStepId(), selectedTest.getTestId(), newStep.getName(), newStep.getDescription(), newStep.getExpected(), selectedTest);
         selectedTest.addStep(step);
-//        setStepNumbers(selectedTest);
+        setStepNumbers(selectedTest);
     }
 
     public void exitWithSaving() {
-        deleteSteps();
-        saveSteps();
+        controller.updateTest(selectedTest);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -246,14 +227,6 @@ public class MBTestTreeView implements Serializable {
         this.newStep = newStep;
     }
 
-    private void deleteSteps() {
-        if (removedSteps.isEmpty()) {
-            return;
-        }
-        controller.deleteStepList(removedSteps);
-        removedSteps = new ArrayList<>();
-    }
-
     public void deleteTest() {
         if (selectedTest != null) {
             deleteSelectedTest();
@@ -262,12 +235,18 @@ public class MBTestTreeView implements Serializable {
             showMessage("Error", "You must select a test to delete!");
         }
     }
+
     private void deleteSelectedTest() {
         controller.deleteTest(selectedTest);
     }
 
-    private void saveSteps() {
-        controller.saveSteps(selectedTest.getStepList());
-    }
+    private int addNewStepId() {
+        if (selectedTest.getStepList().isEmpty()) {
+            return 1;
+        } else {
+            Collections.sort(selectedTest.getStepList(), (step1, step2) -> step1.getStepId() < step2.getStepId() ? -1 : step1.getStepId() == step2.getStepId() ? 0 : 1);
+            return selectedTest.getStepList().get(selectedTest.getStepList().size() - 1).getStepId() + 1;
 
+        }
+    }
 }

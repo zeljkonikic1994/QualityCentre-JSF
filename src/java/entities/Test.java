@@ -6,63 +6,47 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
  *
  * @author ZXNIKIC
  */
 @Entity
 @Table(name = "test")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Test.findAll", query = "SELECT t FROM Test t")
-    , @NamedQuery(name = "Test.findByTestId", query = "SELECT t FROM Test t WHERE t.testId = :testId")
-    , @NamedQuery(name = "Test.findByDateCreated", query = "SELECT t FROM Test t WHERE t.dateCreated = :dateCreated")
-    , @NamedQuery(name = "Test.findByName", query = "SELECT t FROM Test t WHERE t.name = :name")})
 public class Test implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "test_id")
+    @Column(name = "TEST_ID")
     private Integer testId;
 
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "date_created")
     @Temporal(TemporalType.DATE)
     private Date dateCreated;
 
-    @Basic(optional = false)
-    @Size(min = 1, max = 255)
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "test", orphanRemoval = true, fetch = FetchType.EAGER,  cascade = CascadeType.PERSIST)
-    private List<Step> stepList = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "STEP", joinColumns = {@JoinColumn(name = "TEST_ID")})
+    @MapKeyColumn(name = "STEP_ID")
+    private Map<Integer, Step> steps = new HashMap<>();
 
     public Test() {
     }
@@ -76,14 +60,7 @@ public class Test implements Serializable {
         this.dateCreated = dateCreated;
         this.name = name;
     }
-
-    public Test(Integer testId, Date dateCreated, String name, List<Step> stepList) {
-        this.testId = testId;
-        this.dateCreated = dateCreated;
-        this.name = name;
-        this.stepList = stepList;
-    }
-
+    
     public Integer getTestId() {
         return testId;
     }
@@ -108,41 +85,33 @@ public class Test implements Serializable {
         this.name = name;
     }
 
-    @XmlTransient
-    public List<Step> getStepList() {
-        return stepList;
+    public Map<Integer, Step> getSteps() {
+        return steps;
     }
 
-    public void addStep(Step step) {
-        if (step != null) {
-            stepList.add(step);
-            step.setTest(this);
-        }
-    }
-
-    public void setStepList(List<Step> stepList) {
-        this.stepList = stepList;
-    }
-
-    public int getNumberOfSteps() {
-        return stepList.size();
+    public void setSteps(Map<Integer, Step> steps) {
+        this.steps = steps;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (testId != null ? testId.hashCode() : 0);
+        int hash = 7;
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Test)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Test other = (Test) object;
-        if ((this.testId == null && other.testId != null) || (this.testId != null && !this.testId.equals(other.testId))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Test other = (Test) obj;
+        if (!Objects.equals(this.testId, other.testId)) {
             return false;
         }
         return true;
@@ -150,14 +119,10 @@ public class Test implements Serializable {
 
     @Override
     public String toString() {
-        return "entities.Test[ testId=" + testId + " ]";
+        return "Test{" + "testId=" + testId + ", dateCreated=" + dateCreated + ", name=" + name + ", steps=" + steps + '}';
     }
-
-    public void removeStep(Step s) {
-        if (s != null) {
-            this.stepList.remove(s);
-            s.setTest(null);
-        }
+    public void addStep(Step step, int stepId){
+        this.steps.put(stepId,step);
     }
-
+    
 }

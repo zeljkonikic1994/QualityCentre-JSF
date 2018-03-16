@@ -19,7 +19,8 @@ public class Step implements Serializable{
     private String description;
     private String expected;
     private Test test;
-
+    private int no;
+    
     public Step(int stepId, int testId, String name, String description, String expected, Test test) {
         this.stepId = stepId;
         this.testId = testId;
@@ -119,5 +120,15 @@ public class Step implements Serializable{
     public String toString() {
         return "StepDTO{" + "stepId=" + stepId + ", testId=" + testId + ", name=" + name + '}';
     }
+
+    public int getNo() {
+        return no;
+    }
+
+    public void setNo(int no) {
+        this.no = no;
+    }
+    
+    
 
 }

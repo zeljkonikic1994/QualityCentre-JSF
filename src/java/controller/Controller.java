@@ -6,13 +6,11 @@
 package controller;
 
 import dao.SpecificStepService;
-import dao.StepService;
 import dao.TestService;
 import dao.TestSetService;
 import dao.TypeService;
 import dao.UserService;
 import entities.SpecificStep;
-import entities.Step;
 import entities.Test;
 import entities.TestSet;
 import java.io.Serializable;
@@ -86,20 +84,9 @@ public class Controller implements Serializable {
         TestService testService = new TestService();
         testService.save(TestConverter.convertTo(testDTO));
     }
-    
-    public void saveSteps(List<dto.Step> stepList) {
-        StepService stepService = new StepService();
-        List<Step> stepsForDB = EntityHelper.convertToStepList(stepList);
-        for (Step step : stepsForDB) {
-            stepService.saveOrUpdate(step);
-        }
-    }
-    
-    public void deleteStepList(List<dto.Step> removedSteps) {
-        StepService stepService = new StepService();
-        for (dto.Step removedStep : removedSteps) {
-            stepService.delete(removedStep.getStepId(), removedStep.getTestId());
-        }
+    public void updateTest(dto.Test testDTO) {
+        TestService testService = new TestService();
+        testService.update(TestConverter.convertTo(testDTO));
     }
     
     public void deleteTest(dto.Test selectedTest) {

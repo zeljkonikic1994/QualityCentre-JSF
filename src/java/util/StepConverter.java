@@ -14,11 +14,11 @@ import entities.StepPK;
  */
 public class StepConverter {
 
-    public static dto.Step convertFrom(Step step) {
-        return new dto.Step(step.getStepPK().getStepId(), step.getStepPK().getTestId(), step.getName(), step.getDescription(), step.getExpected());
+    public static dto.Step convertFrom(int stepId, Step step, int testId) {
+        return new dto.Step(stepId, testId, step.getName(), step.getDescription(), step.getExpected());
     }
 
     public static Step convertTo(dto.Step step) {
-        return new Step(new StepPK(step.getStepId(), step.getTestId()), step.getName(), step.getDescription(), step.getExpected());
+        return new Step(step.getName(), step.getDescription(), step.getExpected());
     }
 }

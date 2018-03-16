@@ -5,7 +5,9 @@
  */
 package util;
 
+import entities.Step;
 import entities.Test;
+import java.util.Map;
 
 /**
  *
@@ -14,10 +16,21 @@ import entities.Test;
 public class TestConverter {
 
     public static dto.Test convertFrom(Test test) {
-        return new dto.Test(test.getTestId(), test.getDateCreated(), test.getName());
+        dto.Test testDto = new dto.Test(test.getTestId(), test.getDateCreated(), test.getName());
+        for (Map.Entry<Integer, Step> step : test.getSteps().entrySet()) {
+            dto.Step stepDto = new dto.Step(step.getKey(), test.getTestId(), step.getValue().getName(), step.getValue().getDescription(), step.getValue().getExpected());
+            stepDto.setTest(testDto);
+            testDto.addStep(stepDto);
+        }
+        return testDto;
     }
 
     public static Test convertTo(dto.Test test) {
-        return new Test(test.getTestId(), test.getDateCreated(), test.getName());
+        Test te = new Test(test.getTestId(), test.getDateCreated(), test.getName());
+        for (dto.Step stepDto : test.getStepList()) {
+            Step step = new Step(stepDto.getName(), stepDto.getDescription(), stepDto.getExpected());
+            te.addStep(step, stepDto.getStepId());
+        }
+        return te;
     }
 }
