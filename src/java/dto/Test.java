@@ -5,6 +5,7 @@
  */
 package dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author ZXNIKIC
  */
-public class Test {
+public class Test implements Serializable{
 
     private int testId;
     private Date dateCreated;
@@ -78,6 +79,11 @@ public class Test {
 
     public void removeStep(Step step) {
         this.stepList.remove(step);
+    }
+
+    @Override
+    public String toString() {
+        return "Test{" + "testId=" + testId + ", dateCreated=" + dateCreated + ", name=" + name + ", stepList=" + stepList + '}';
     }
 
 }

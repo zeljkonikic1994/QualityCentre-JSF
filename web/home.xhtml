@@ -99,22 +99,25 @@
             </p:tab>
 
             <p:tab title="Test Lab">
-<!--                <h:form id="testLabForm">
-                    <p:treeTable value="#{mbTreeTable.root}" var="node">
+                <h:form id="testLabForm">
+                    <p:treeTable value="#{mbTreeTable.root}" var="node" style="width: 70%">
                         <f:facet name="header">
                             Test Sets
                         </f:facet>
                         <p:column headerText="Name">
-                            <h:outputText value="#{node.name}" />
+                            <h:outputText value="#{node.name}" style="width:50px"/>
                         </p:column>
-                        <p:column headerText="Type">
+                        <p:column headerText="Type" style="width:100px">
                             <h:outputText value="#{node.type}" />
                         </p:column>
-                        <p:column headerText="Status">
-                            <h:outputText value="#{node.status}" />
+                        <p:column headerText="Status" style="width:100px">
+                            <h:outputText value="#{node.status}" styleClass="#{node.getRowStyle()}"/>
+                        </p:column>
+                        <p:column style="width:35px">
+                            <p:commandLink actionListener="#{mbTreeTable.runTest()}" title="Action" styleClass="ui-icon ui-icon-play"/>
                         </p:column>
                     </p:treeTable>
-                </h:form>-->
+                </h:form>
             </p:tab>
 
             <p:tab title="Statistics">

@@ -5,6 +5,7 @@
  */
 package dto;
 
+import constants.Constants;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,42 @@ public class Folder implements Serializable{
     @Override
     public String toString() {
         return "FolderDTO{" + "name=" + name + ", stepList=" + stepList + '}';
+    }
+    
+    public int getStatus(){
+        int noRun = 0;
+        int failed = 0;
+        int passed = 0;
+        int notCompleted = 0;
+        
+        for (Step step : stepList) {
+            switch(step.getStatusId()){
+                case Constants.FAILED:
+                    failed++;
+                    break;
+                case Constants.NOT_COMPLETED:
+                    notCompleted++;
+                    break;
+                case Constants.NO_RUN:
+                    noRun++;
+                    break;
+                case Constants.PASSED:
+                    passed++;
+                    break;
+                default:
+            }
+        }
+        if(noRun == stepList.size())
+            return Constants.NO_RUN;
+        if(noRun > 0 )
+            return Constants.NOT_COMPLETED;
+        if(notCompleted > 0)
+            return Constants.NOT_COMPLETED;
+        if(passed == stepList.size())
+            return Constants.PASSED;
+        if(failed > 0 && noRun ==0 && notCompleted == 0)
+            return Constants.FAILED;
+        return -1;
     }
     
     

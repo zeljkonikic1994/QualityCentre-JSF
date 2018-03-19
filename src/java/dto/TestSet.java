@@ -5,6 +5,7 @@
  */
 package dto;
 
+import constants.Constants;
 import dto.Folder;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -84,6 +85,47 @@ public class TestSet implements Serializable {
 
     public void removeFolder(Folder selectedDestinationFolder) {
         folderList.remove(selectedDestinationFolder);
+    }
+
+    @Override
+    public String toString() {
+        return "TestSet{" + "name=" + name + ", dateCreated=" + dateCreated + ", dateModified=" + dateModified + ", folderList=" + folderList + ", testSetId=" + testSetId + '}';
+    }
+    
+    public int getStatus(){
+        int noRun = 0;
+        int failed = 0;
+        int passed = 0;
+        int notCompleted = 0;
+        for (Folder folder : folderList) {
+            switch(folder.getStatus()){
+                case Constants.FAILED:
+                    failed++;
+                    break;
+                case Constants.NOT_COMPLETED:
+                    notCompleted++;
+                    break;
+                case Constants.NO_RUN:
+                    noRun++;
+                    break;
+                case Constants.PASSED:
+                    passed++;
+                    break;
+                default:
+            }
+        }
+        if(noRun == folderList.size())
+            return Constants.NO_RUN;
+        if(noRun > 0 )
+            return Constants.NOT_COMPLETED;
+        if(notCompleted > 0)
+            return Constants.NOT_COMPLETED;
+        if(passed == folderList.size())
+            return Constants.PASSED;
+        if(failed > 0 && noRun ==0 && notCompleted == 0)
+            return Constants.FAILED;
+        
+        return -1;
     }
     
 }

@@ -36,8 +36,8 @@ public class SpecificStep implements Serializable {
     }
 
 
-    public SpecificStep(String name, String description, String expected, String folder) {
-        this.name = name;
+    public SpecificStep(String newName, String description, String expected, String folder) {
+        this.name = newName;
         this.description = description;
         this.expected = expected;
         this.folder = folder;

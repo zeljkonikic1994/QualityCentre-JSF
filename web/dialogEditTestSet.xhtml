@@ -46,26 +46,28 @@
                         <p:inplace editor="true" event="dblclick">
                             <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
                             <p:inputText value="#{node.name}" />
-                            <!--<h:outputText value="#{node.name}" />-->
                         </p:inplace>
                     </p:treeNode>
                     <p:treeNode type="step" icon="ui-icon-comment">
                         <p:inplace editor="true" event="dblclick">
                             <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
                             <p:inputText value="#{node.name}" />
-                            <!--<h:outputText value="#{node.name}" />-->
                         </p:inplace>
                     </p:treeNode>
                 </p:tree>
-                
+
                 <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.saveTestSet()}" update="@form">
                     <h:outputText value="Save test set"></h:outputText>
                 </p:commandLink>
                 <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.exitWithoutSaving()}" immediate="true">
                     <h:outputText value="Cancel"></h:outputText>
                 </p:commandLink>
-                <p:contextMenu for="tree2">
+                <p:contextMenu for="tree2" nodeType="folder">
                     <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
+                </p:contextMenu>
+                <p:contextMenu for="tree2" nodeType="step">
+                    <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
+                    <p:menuitem value="Edit" update="@form" actionListener="#{mbTestSetTreeView.editStep}" icon="ui-icon-close"/>
                 </p:contextMenu>
 
             </h:panelGrid>

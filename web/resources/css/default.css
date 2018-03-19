@@ -45,3 +45,46 @@ a:link:hover, a:visited:hover  {
     min-width: 14px;
 }
 
+
+.green{
+    color:green;
+    font-weight: bold;
+    background-image:none;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+.red{
+   color:red;
+    font-weight: bold;
+    background-image:none;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+.orange{
+    color:orange;
+    font-weight: bold;
+    background-image:none;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+.yellow{
+   color:yellow;
+    font-weight: bold;
+    background-image:none;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}

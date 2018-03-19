@@ -117,11 +117,6 @@ public class Controller implements Serializable {
 
     public void updateSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
-        for (Folder folder : selectedSet.getFolderList()) {
-            for (Step step : folder.getStepList()) {
-                System.out.println(step);
-            }
-        }
         testSetService.update(TestSetConverter.convertToTestSet(selectedSet));
     }
 

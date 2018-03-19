@@ -47,7 +47,7 @@ public class MBTestSetTreeView implements Serializable {
     private TestSet selectedSet;
     private List<TestSet> allSets;
     private List<Test> sourceList;
-
+    private Step stepEdit;
 
     @PostConstruct
     public void init() {
@@ -198,6 +198,9 @@ public class MBTestSetTreeView implements Serializable {
             TreeNode folderNode = new DefaultTreeNode("folder", folder, node);
             folderNode.setExpanded(true);
             for (Step step : folder.getStepList()) {
+                if(step.getTestId() == 29){
+                    System.out.println("populateDestinationTree "+step);
+                }
                 TreeNode stepNode = new DefaultTreeNode("step", step, folderNode);
             }
         }
@@ -408,6 +411,14 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void saveTestSet() {
+        selectedSet.setDateModified(new Date());
+        for (Folder folder : selectedSet.getFolderList()) {
+            for (Step step : folder.getStepList()) {
+                if(step.getTestId()==29){
+                    System.out.println("PRE CUVANJA: "+step);
+                }
+            }
+        }
         controller.updateSet(selectedSet);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
@@ -416,6 +427,11 @@ public class MBTestSetTreeView implements Serializable {
     public void exitWithoutSaving() {
         PrimeFaces.current().dialog().closeDynamic(null);
         clearFields();
+    }
+
+    public void exitEditStepWithoutSaving() {
+        stepEdit = null;
+        PrimeFaces.current().dialog().closeDynamic(null);
     }
 
     public void delete() {
@@ -429,6 +445,22 @@ public class MBTestSetTreeView implements Serializable {
             addToSource(selectedDestinationFolder);
         }
         populateTrees();
+    }
+
+    public void editStep() {
+        this.stepEdit = (Step) selectedDestinationNode.getData();
+        Map<String, Object> options = new HashMap<String, Object>();
+        options.put("resizable", false);
+        options.put("modal", true);
+        options.put("width", 800);
+        options.put("height", 600);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        options.put("headerElement", "customheader");
+        options.put("closable", true);
+        options.put("resizable", true);
+
+        PrimeFaces.current().dialog().openDynamic("dialogEditStep", options, null);
     }
 
     private void addToSource(Folder selectedDestinationFolder) {
@@ -499,5 +531,43 @@ public class MBTestSetTreeView implements Serializable {
         this.sourceList = sourceList;
     }
 
-    
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Step getStepEdit() {
+        return stepEdit;
+    }
+
+    public void setStepEdit(Step editStep) {
+        this.stepEdit = editStep;
+    }
+
+    public void updateStep() {
+        if (stepEdit != null) {
+            
+            for (TestSet set : allSets) {
+                if (set.getTestSetId() == stepEdit.getTestId()) {
+                    for (Folder folder : set.getFolderList()) {
+                        for (Step step : folder.getStepList()) {
+                            if (step.getStepId() == stepEdit.getStepId()) {
+                                step.setName(stepEdit.getName());
+                                step.setDescription(stepEdit.getDescription());
+                                step.setExpected(stepEdit.getExpected());
+                                System.out.println("SETOVAO: "+step);
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        }
+//        stepEdit = null;
+        populateDestinationTree();
+        PrimeFaces.current().dialog().closeDynamic(null);
+    }
 }

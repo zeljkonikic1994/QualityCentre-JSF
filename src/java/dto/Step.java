@@ -129,7 +129,7 @@ public class Step implements Serializable {
 
     @Override
     public String toString() {
-        return "StepDTO{" + "stepId=" + stepId + ", testId=" + testId + ", name=" + name + '}';
+        return "Step{" + "stepId=" + stepId + ", testId=" + testId + ", name=" + name + ", description=" + description + ", expected=" + expected + ", test=" + test + ", statusId=" + statusId + ", no=" + no + '}';
     }
 
     public int getStatusId() {
