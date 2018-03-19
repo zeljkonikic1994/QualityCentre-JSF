@@ -5,12 +5,14 @@
  */
 package controller;
 
+import dao.CompletionStatusService;
 import dao.TestService;
 import dao.TestSetService;
 import dao.TypeService;
 import dao.UserService;
 import dto.Folder;
 import dto.Step;
+import entities.CompletionStatus;
 import entities.Test;
 import entities.TestSet;
 import java.io.Serializable;
@@ -118,6 +120,12 @@ public class Controller implements Serializable {
     public void updateSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.update(TestSetConverter.convertToTestSet(selectedSet));
+    }
+
+    public Object getStatusByName(String value) {
+        CompletionStatusService completionStatusService = new CompletionStatusService();
+        CompletionStatus status = completionStatusService.findByName(value);
+        return status;
     }
 
 }

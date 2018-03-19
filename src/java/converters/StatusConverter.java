@@ -6,24 +6,24 @@
 package converters;
 
 import controller.Controller;
+import entities.CompletionStatus;
 import entities.Type;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
 import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  *
- * @author zeljk
+ * @author ZXNIKIC
  */
 @Named
 @RequestScoped
-@FacesConverter(value = "typeConverter")
-public class TypeConverter implements Converter {
-
+@FacesConverter(value = "statusConverter")
+public class StatusConverter implements Converter{
     @Inject
     Controller cont;
 
@@ -33,7 +33,7 @@ public class TypeConverter implements Converter {
             return null;
         }
         cont = new Controller();
-        return cont.getTypeByName(value);
+        return cont.getStatusByName(value);
     }
 
     @Override
@@ -41,11 +41,10 @@ public class TypeConverter implements Converter {
         if (value == null) {
             return "";
         }
-        if (value instanceof Type) {
-            Type t = (Type) value;
-            return t.toString();
+        if (value instanceof CompletionStatus) {
+            CompletionStatus cs = (CompletionStatus) value;
+            return cs.getName();
         }
         return "";
     }
-
 }

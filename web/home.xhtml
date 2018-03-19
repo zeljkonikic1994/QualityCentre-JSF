@@ -42,8 +42,8 @@
     </ui:define>
     <ui:define name="content">
         <p:growl id="growl" showDetail="true" escape="false"/>
-        <p:tabView dynamic="true" cache="true" effect="fold" styleClass="tabMenu" >
-
+        <p:tabView cache="false">
+            <p:ajax event="tabChange" listener="#{mbTabbedView.onTabChange}" update="testLabForm"/>
             <p:tab title="Test Plan">
                 <h:form id="frm" style="position: center;">
                     <p:tree value="#{mbTestTreeView.root}" 
@@ -98,9 +98,9 @@
                 </h:form>
             </p:tab>
 
-            <p:tab title="Test Lab">
+            <p:tab title="Test Lab" id="testLabTab">
                 <h:form id="testLabForm">
-                    <p:treeTable value="#{mbTreeTable.root}" var="node" style="width: 70%">
+                    <p:treeTable id="treeTable" value="#{mbTreeTable.root}" var="node" style="width: 70%" selectionMode="single" selection="#{mbTreeTable.selectedNode}" resizableColumns="true" liveResize="true">
                         <f:facet name="header">
                             Test Sets
                         </f:facet>
@@ -113,10 +113,11 @@
                         <p:column headerText="Status" style="width:100px">
                             <h:outputText value="#{node.status}" styleClass="#{node.getRowStyle()}"/>
                         </p:column>
-                        <p:column style="width:35px">
-                            <p:commandLink actionListener="#{mbTreeTable.runTest()}" title="Action" styleClass="ui-icon ui-icon-play"/>
-                        </p:column>
+
                     </p:treeTable>
+                    <p:commandButton value="Run test" icon="ui-icon-extlink" actionListener="#{mbTreeTable.runTest()}">
+                        <p:ajax event="dialogReturn" update="@form" />
+                    </p:commandButton>
                 </h:form>
             </p:tab>
 

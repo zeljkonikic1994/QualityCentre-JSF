@@ -34,7 +34,7 @@ public class TreeTableNode {
         } else if (object instanceof Step) {
             return "Step";
         } else if (object instanceof Folder) {
-            return "Folder";
+            return "Test";
         }
         return "-";
     }

@@ -5,9 +5,7 @@
  */
 package dao;
 
-import dao.UserDao;
 import entities.Test;
-import entities.User;
 import java.util.List;
 
 /**

@@ -13,9 +13,13 @@ import dto.TreeTableNode;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -33,13 +37,14 @@ public class MBTreeTable implements Serializable {
     private List<TestSet> testSets;
 
     private TreeNode root;
+    private TreeNode selectedNode;
 
     /**
      * Creates a new instance of MBTreeTable
      */
     @PostConstruct
     public void init() {
-        testSets = controller.getSets();
+        loadSets();
         populateTreeTable();
     }
 
@@ -66,9 +71,44 @@ public class MBTreeTable implements Serializable {
     public void setRoot(TreeNode root) {
         this.root = root;
     }
-    
-    public void runTest(){
-        System.out.println("POZVAO!!!");
+
+    public void runTest() {
+        if (selectedNode != null) {
+            Map<String, Object> options = new HashMap<String, Object>();
+            options.put("resizable", false);
+            options.put("modal", true);
+            options.put("width", 800);
+            options.put("height", 600);
+            options.put("contentWidth", "100%");
+            options.put("contentHeight", "100%");
+            options.put("headerElement", "customheader");
+            options.put("closable", true);
+
+            PrimeFaces.current().dialog().openDynamic("dialogTestRun", options, null);
+        } else {
+            showMessage("Error!", "You must select a test to run!");
+        }
     }
 
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
+    public void showMessage(String title, String text) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, title, text);
+        PrimeFaces.current().dialog().showMessageDynamic(message);
+    }
+
+    private void loadSets() {
+        testSets = controller.getSets();
+    }
+
+    public void refresh() {
+        loadSets();
+        populateTreeTable();
+    }
 }
