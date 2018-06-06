@@ -4,7 +4,10 @@
  * and open the template in the editor.
  */
 package dto;
+
 import constants.Constants;
+import entities.CompletionStatus;
+
 /**
  *
  * @author ZXNIKIC
@@ -13,8 +16,23 @@ public class TreeTableNode {
 
     private Object object;
 
+    private CompletionStatus statusDropDown;
+    private boolean showDropDown;
+
     public TreeTableNode(Object object) {
         this.object = object;
+        if (object instanceof TestSet) {
+            showDropDown = false;
+//            ((TestSet) object).getName();
+        } else if (object instanceof Step) {
+            showDropDown = true;
+            statusDropDown = populateStatusDropDown(((Step) object).getStatusId());
+        } else if (object instanceof Folder) {
+            showDropDown = false;
+//            return ((Folder) object).getName();
+        } else {
+            showDropDown = false;
+        }
     }
 
     public String getName() {
@@ -39,9 +57,16 @@ public class TreeTableNode {
         return "-";
     }
 
+    public String getTestSetStatus() {
+        if (object instanceof TestSet) {
+            return ((TestSet) object).getStatus() + "";
+        }
+        return Constants.NO_RUN + "";
+    }
+
     public String getStatus() {
         if (object instanceof TestSet) {
-            switch(((TestSet) object).getStatus()){
+            switch (((TestSet) object).getStatus()) {
                 case Constants.FAILED:
                     return "Failed";
                 case Constants.NOT_COMPLETED:
@@ -50,11 +75,11 @@ public class TreeTableNode {
                     return "No run";
                 case Constants.PASSED:
                     return "Passed";
-                default: 
+                default:
                     return "-";
             }
         } else if (object instanceof Step) {
-            switch(((Step) object).getStatusId()){
+            switch (((Step) object).getStatusId()) {
                 case Constants.FAILED:
                     return "Failed";
                 case Constants.NOT_COMPLETED:
@@ -63,11 +88,11 @@ public class TreeTableNode {
                     return "No run";
                 case Constants.PASSED:
                     return "Passed";
-                default: 
+                default:
                     return "-";
             }
         } else if (object instanceof Folder) {
-             switch(((Folder) object).getStatus()){
+            switch (((Folder) object).getStatus()) {
                 case Constants.FAILED:
                     return "Failed";
                 case Constants.NOT_COMPLETED:
@@ -76,15 +101,15 @@ public class TreeTableNode {
                     return "No run";
                 case Constants.PASSED:
                     return "Passed";
-                default: 
+                default:
                     return "-";
             }
         }
         return "-";
     }
-    
-    public String getRowStyle(){
-        switch(getStatus()){
+
+    public String getRowStyle() {
+        switch (getStatus()) {
             case "Passed":
                 return "green";
             case "Failed":
@@ -97,4 +122,48 @@ public class TreeTableNode {
                 return "";
         }
     }
+
+    public Object getObject() {
+        return object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    public CompletionStatus getStatusDropDown() {
+        return statusDropDown;
+    }
+
+    public void setStatusDropDown(CompletionStatus statusDropDown) {
+        this.statusDropDown = statusDropDown;
+        if (object instanceof Step) {
+            ((Step) object).setStatusId(statusDropDown.getId());
+        }
+    }
+
+    public boolean isShowDropDown() {
+        return showDropDown;
+    }
+
+    public void setShowDropDown(boolean showDropDown) {
+        this.showDropDown = showDropDown;
+    }
+
+    private CompletionStatus populateStatusDropDown(int statusId) {
+        CompletionStatus cs = new CompletionStatus(statusId, "");
+        switch (statusId) {
+            case 1:
+                return new CompletionStatus(statusId, "Passed");
+            case 2:
+                return new CompletionStatus(statusId, "Failed");
+            case 3:
+                return new CompletionStatus(statusId, "No run");
+            case 4:
+                return new CompletionStatus(statusId, "Not completed");
+            default:
+                return new CompletionStatus(3, "No run");
+        }
+    }
+
 }

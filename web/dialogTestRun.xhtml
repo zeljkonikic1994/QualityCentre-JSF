@@ -8,9 +8,30 @@
         <title>Test runner</title>
     </h:head>
     <h:body>
-        <h:form id="form">
-            <p:growl id="msgs" showDetail="true" />
-            
+        <h:form id="testRunForm">
+            <p:treeTable id="testRunTreeTable" value="#{mbTestRun.root}" var="node" style="width: 70%"  resizableColumns="true" liveResize="true">
+                <f:facet name="header">
+                    Test Set:
+                </f:facet>
+                <p:column headerText="Name">
+                    <h:outputText value="#{node.name}" style="width:50px"/>
+                </p:column>
+                <p:column headerText="Type" style="width:100px">
+                    <h:outputText value="#{node.type}" />
+                </p:column>
+                <p:column headerText="Status" style="width:100px">
+                    <p:selectOneMenu value="#{node.statusDropDown}" converter="statusConverter" rendered="#{node.showDropDown}">
+                        <f:selectItems value="#{mbTestRun.statuses}" var="s" itemLabel="#{s}" itemValue="#{s}" />
+                    </p:selectOneMenu>
+                </p:column>
+
+            </p:treeTable>
+            <p:commandButton value="OK" icon="ui-icon-extlink" actionListener="#{mbTestRun.exitWithSaving()}">
+                <p:ajax event="dialogReturn" update="@form" />
+            </p:commandButton>
+            <p:commandButton value="Cancel" icon="ui-icon-extlink" actionListener="#{mbTestRun.exitWithoutSaving()}">
+                <p:ajax event="dialogReturn" update="@form" />
+            </p:commandButton>
         </h:form>
     </h:body>
 </html>

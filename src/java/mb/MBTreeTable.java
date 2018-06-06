@@ -8,6 +8,7 @@ package mb;
 import controller.Controller;
 import dto.Folder;
 import dto.Step;
+import dto.Test;
 import dto.TestSet;
 import dto.TreeTableNode;
 import javax.inject.Named;
@@ -34,6 +35,8 @@ public class MBTreeTable implements Serializable {
     @Inject
     Controller controller;
 
+    @Inject
+    MBTestRun mbTestRun;
     private List<TestSet> testSets;
 
     private TreeNode root;
@@ -57,8 +60,10 @@ public class MBTreeTable implements Serializable {
             TreeNode setNode = new DefaultTreeNode(new TreeTableNode(testSet), root);
             for (Folder folder : testSet.getFolderList()) {
                 TreeNode folderNode = new DefaultTreeNode(new TreeTableNode(folder), setNode);
+                folderNode.setSelectable(false);
                 for (Step step : folder.getStepList()) {
                     TreeNode stepNode = new DefaultTreeNode(new TreeTableNode(step), folderNode);
+                    stepNode.setSelectable(false);
                 }
             }
         }
@@ -83,7 +88,7 @@ public class MBTreeTable implements Serializable {
             options.put("contentHeight", "100%");
             options.put("headerElement", "customheader");
             options.put("closable", true);
-
+            mbTestRun.setTestSet((TestSet)((TreeTableNode) selectedNode.getData()).getObject());
             PrimeFaces.current().dialog().openDynamic("dialogTestRun", options, null);
         } else {
             showMessage("Error!", "You must select a test to run!");

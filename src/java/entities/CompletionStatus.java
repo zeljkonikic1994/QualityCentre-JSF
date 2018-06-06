@@ -55,7 +55,7 @@ public class CompletionStatus {
 
     @Override
     public String toString() {
-        return "CompletionStatus{" + "id=" + id + ", name=" + name + '}';
+        return name;
     }
 
     @Override

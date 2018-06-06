@@ -128,4 +128,11 @@ public class Controller implements Serializable {
         return status;
     }
 
+    public List<CompletionStatus> getAllStatuses() {
+        CompletionStatusService completionStatusService = new CompletionStatusService();
+        List<CompletionStatus> statuses = completionStatusService.findAll();
+        return statuses;
+    }
+
+
 }
