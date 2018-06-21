@@ -7,3 +7,14 @@ body{
     height: 100%;
     background-attachment: fixed;
 }
+/*.ui-tabs .ui-tabs-nav .ui-a-selected{
+   background:#6552e3;
+   background-image:url(./images/background.png);
+   border-bottom:none;
+   -moz-box-shadow:none;
+   -webkit-box-shadow:none;box-shadow:none;
+}*/
+
+#testPlanTab{
+     background-image: url("#{resource['images/background.jpg']}");
+}

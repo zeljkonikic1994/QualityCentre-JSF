@@ -127,5 +127,12 @@ public class TestSet implements Serializable {
         
         return -1;
     }
-    
+
+    public int getNumberOfStepsWithStatus(int status) {
+        List<Step> steps = new ArrayList<>();
+        for(Folder f : folderList){
+            steps.addAll(f.getStepList());
+        }
+        return (int) steps.stream().filter(s -> s.getStatusId() == status).count();
+    }
 }

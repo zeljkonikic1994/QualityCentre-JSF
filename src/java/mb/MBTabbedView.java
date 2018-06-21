@@ -23,7 +23,8 @@ public class MBTabbedView implements Serializable {
     MBTestSetTreeView mBTestSetTreeView;
     @Inject
     MBTreeTable mBTreeTable;
-
+    @Inject
+    MBChartView mbChartView;
     /**
      * Creates a new instance of MBTabbedView
      */
@@ -33,6 +34,8 @@ public class MBTabbedView implements Serializable {
     public void onTabChange(TabChangeEvent event) {
         if (event.getTab().getTitle().equals("Test Lab")) {
             mBTreeTable.refresh();
+        }else if(event.getTab().getTitle().equals("Statistics")){
+            mbChartView.refresh();
         }
     }
 }

@@ -8,9 +8,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        <h:outputStylesheet name="css/index_css.css"  />
-        <h:outputStylesheet name="css/loginForm.css"  />
-
+        <h:outputStylesheet name="css/home_css.css" />
         <p:notificationBar position="top" 
                            style="opacity: 0.8; z-index: 9998;" 
                            effect="fade" 
@@ -42,9 +40,9 @@
     </ui:define>
     <ui:define name="content">
         <p:growl id="growl" showDetail="true" escape="false"/>
-        <p:tabView cache="false">
+        <p:tabView cache="false" style="border: 0px;">
             <p:ajax event="tabChange" listener="#{mbTabbedView.onTabChange}" update="testLabForm"/>
-            <p:tab title="Test Plan">
+            <p:tab title="Test Plan" id="testPlanTab">
                 <h:form id="frm" style="position: center;">
                     <p:tree value="#{mbTestTreeView.root}" 
                             var="node" 
@@ -72,7 +70,7 @@
                     <p:commandButton id="deleteBtn" value="Delete test" icon="ui-icon-extlink" actionListener="#{mbTestTreeView.deleteTest}" update="@form" >
                         <p:confirm disabled="#{empty mbTestTreeView.selectedTest}" header="Confirmation" message="Are you sure you want to delete this test?" icon="ui-icon-alert" />
                     </p:commandButton>
-
+                    <p:separator />
                     <p:tree value="#{mbTestSetTreeView.root}" 
                             var="node" 
                             selectionMode="single"
@@ -113,7 +111,7 @@
                         <p:column headerText="Status" style="width:100px">
                             <h:outputText value="#{node.status}" styleClass="#{node.getRowStyle()}"/>
                         </p:column>
-                        
+
 
                     </p:treeTable>
                     <p:commandButton value="Run test" icon="ui-icon-extlink" actionListener="#{mbTreeTable.runTest()}">
@@ -123,7 +121,9 @@
             </p:tab>
 
             <p:tab title="Statistics">
-
+                <h:panelGrid columns="2" columnClasses="left,right" style="width:100%">
+                    <p:chart type="bar" model="#{mbChartView.barModel}" style="width:400px;" />
+                </h:panelGrid>
             </p:tab>
         </p:tabView>
     </ui:define>
