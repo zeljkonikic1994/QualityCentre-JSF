@@ -51,6 +51,7 @@ public class TestSetConverter {
 
     public static TestSet convertToTestSet(dto.TestSet dto) {
         TestSet entity = new TestSet(dto.getTestSetId(), dto.getName(), dto.getDateCreated(), dto.getDateModified());
+        entity.setModifiedBy(dto.getModifiedBy());
         for (Folder folder : dto.getFolderList()) {
             for (dto.Step step : folder.getStepList()) {
                 SpecificStep ss = new SpecificStep(step.getName(), step.getDescription(), step.getExpected(), folder.getName());

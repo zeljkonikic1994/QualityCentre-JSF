@@ -50,7 +50,10 @@ public class TestSet implements Serializable {
         @JoinColumn(name = "TEST_SET_ID")})
     @MapKeyColumn(name = "ID")
     private Map<Integer, SpecificStep> steps = new HashMap<>();
-
+    
+    @Column(name="LAST_MODIFIED_BY")
+    private String modifiedBy;
+    
     public TestSet() {
     }
 
@@ -99,6 +102,14 @@ public class TestSet implements Serializable {
 
     public Map<Integer, SpecificStep> getSteps() {
         return steps;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public void setSteps(Map<Integer, SpecificStep> steps) {

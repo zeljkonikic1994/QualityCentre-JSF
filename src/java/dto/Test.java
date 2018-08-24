@@ -20,7 +20,8 @@ public class Test implements Serializable{
     private Date dateCreated;
     private String name;
     private List<Step> stepList = new ArrayList<>();
-
+    private String modifiedBy; 
+    
     public Test(int testId) {
         this.testId = testId;
     }
@@ -79,6 +80,14 @@ public class Test implements Serializable{
 
     public void removeStep(Step step) {
         this.stepList.remove(step);
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
     @Override

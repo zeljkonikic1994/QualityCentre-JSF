@@ -10,8 +10,6 @@ import dao.TestService;
 import dao.TestSetService;
 import dao.TypeService;
 import dao.UserService;
-import dto.Folder;
-import dto.Step;
 import entities.CompletionStatus;
 import entities.Test;
 import entities.TestSet;
@@ -27,7 +25,7 @@ import util.TestSetConverter;
 
 /**
  *
- * @author zeljk
+ * @author Zeljko
  */
 @Named("Controller")
 @ApplicationScoped
@@ -51,7 +49,7 @@ public class Controller implements Serializable {
         return types;
     }
 
-    public void saveUser(User newUser) {
+    public void registerUser(User newUser) {
         UserService userService = new UserService();
         userService.save(newUser);
     }
@@ -107,17 +105,17 @@ public class Controller implements Serializable {
         return testSetList;
     }
 
-    public void saveSet(dto.TestSet selectedSet) {
+    public void saveTestSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.save(TestSetConverter.convertToTestSet(selectedSet));
     }
 
-    public void deleteSet(dto.TestSet selectedSet) {
+    public void deleteTestSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.delete(selectedSet.getTestSetId());
     }
 
-    public void updateSet(dto.TestSet selectedSet) {
+    public void updateTestSet(dto.TestSet selectedSet) {
         TestSetService testSetService = new TestSetService();
         testSetService.update(TestSetConverter.convertToTestSet(selectedSet));
     }

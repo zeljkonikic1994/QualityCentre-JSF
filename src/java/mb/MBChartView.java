@@ -47,7 +47,7 @@ public class MBChartView implements Serializable {
     public MBChartView() {
     }
 
-    public BarChartModel getBarModel() {
+    public BarChartModel getStatistics() {
         return barModel;
     }
 

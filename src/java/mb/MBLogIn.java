@@ -44,9 +44,9 @@ public class MBLogIn {
     }
 
     public String login() {
-        username = "admin";
-        password = "Admin123#";
-        
+//        username = "admin";
+//        password = "Admin123#";
+//        
         if (!checkIfAllFieldsAreEntered()) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "You must enter all fields.", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -63,6 +63,8 @@ public class MBLogIn {
             if (checkPassword(user.getPassword(), password)) {
                 if (checkIfUserIsApproved(user)) {
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", user);
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome, "+user.getName()+"!", null);
+                    FacesContext.getCurrentInstance().addMessage(null, message);
                     FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "home.xhtml?faces-redirect=true");
                     return "";
                 } else {

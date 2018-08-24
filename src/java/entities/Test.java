@@ -48,6 +48,9 @@ public class Test implements Serializable {
     @MapKeyColumn(name = "STEP_ID")
     private Map<Integer, Step> steps = new HashMap<>();
 
+    @Column(name="LAST_MODIFIED_BY")
+    private String modifiedBy;
+    
     public Test() {
     }
 
@@ -93,6 +96,14 @@ public class Test implements Serializable {
         this.steps = steps;
     }
 
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -119,8 +130,10 @@ public class Test implements Serializable {
 
     @Override
     public String toString() {
-        return "Test{" + "testId=" + testId + ", dateCreated=" + dateCreated + ", name=" + name + ", steps=" + steps + '}';
+        return "Test{" + "testId=" + testId + ", dateCreated=" + dateCreated + ", name=" + name + ", steps=" + steps + ", createdBy=" + modifiedBy + '}';
     }
+
+    
     public void addStep(Step step, int stepId){
         this.steps.put(stepId,step);
     }

@@ -123,7 +123,7 @@ public class MBRegister {
         } else {
             if (checkIfPasswordsMatch()) {
                 addNewUser();
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "User added.", null);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "User added. Once administrators approve your request, you will be able to log in.", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
                 return "";
             } else {
@@ -165,7 +165,7 @@ public class MBRegister {
         newUser.setType(type);
         newUser.setUserName(username);
         
-        controller.saveUser(newUser);
+        controller.registerUser(newUser);
         
     }
 

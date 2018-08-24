@@ -8,6 +8,7 @@ package mb;
 import controller.Controller;
 import dto.Step;
 import dto.Test;
+import entities.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -108,7 +109,16 @@ public class MBTestTreeView implements Serializable {
     }
 
     public void saveTest() {
+        if (selectedTest.getName() == null || selectedTest.getName().isEmpty()) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter test name.", null);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return;
+        }
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        selectedTest.setModifiedBy(user.getUserName());
         controller.saveTest(selectedTest);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Test " + selectedTest.getName() + " added.", null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -190,7 +200,13 @@ public class MBTestTreeView implements Serializable {
     }
 
     public void exitWithSaving() {
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        selectedTest.setModifiedBy(user.getUserName());
         controller.updateTest(selectedTest);
+        
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Steps successfully saved.", null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }

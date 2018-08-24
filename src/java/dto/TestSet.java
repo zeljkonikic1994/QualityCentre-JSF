@@ -22,7 +22,8 @@ public class TestSet implements Serializable {
     private Date dateCreated;
     private Date dateModified;
     private List<Folder> folderList = new ArrayList<>();
-
+    private String modifiedBy;
+    
     private int testSetId;
 
     public TestSet(int testSetId, String name, Date dateCreated, Date dateModified) {
@@ -85,6 +86,14 @@ public class TestSet implements Serializable {
 
     public void removeFolder(Folder selectedDestinationFolder) {
         folderList.remove(selectedDestinationFolder);
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     @Override

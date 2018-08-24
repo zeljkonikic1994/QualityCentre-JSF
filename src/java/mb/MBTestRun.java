@@ -93,7 +93,7 @@ public class MBTestRun implements Serializable {
     }
 
     public void exitWithSaving() {
-        controller.updateSet(testSet);
+        controller.updateTestSet(testSet);
         PrimeFaces.current().dialog().closeDynamic(null);
         this.testSet = null;
     }

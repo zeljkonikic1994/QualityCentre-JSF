@@ -11,6 +11,8 @@ import java.util.List;
 /**
  *
  * @author ZXNIKIC
+ * @param <T>
+ * @param <Id>
  */
 public interface DaoInterface <T, Id extends Serializable>{
     

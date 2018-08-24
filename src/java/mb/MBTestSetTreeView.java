@@ -10,6 +10,7 @@ import dto.Folder;
 import dto.Step;
 import dto.Test;
 import dto.TestSet;
+import entities.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
@@ -111,7 +113,9 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void saveSet() {
-        controller.saveSet(selectedSet);
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        selectedSet.setModifiedBy(user.getUserName());
+        controller.saveTestSet(selectedSet);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -137,7 +141,7 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     private void deleteSelectedSet() {
-        controller.deleteSet(selectedSet);
+        controller.deleteTestSet(selectedSet);
     }
 
     public void viewSet() {
@@ -411,6 +415,8 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void saveTestSet() {
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        selectedSet.setModifiedBy(user.getUserName());
         selectedSet.setDateModified(new Date());
         for (Folder folder : selectedSet.getFolderList()) {
             for (Step step : folder.getStepList()) {
@@ -419,7 +425,7 @@ public class MBTestSetTreeView implements Serializable {
                 }
             }
         }
-        controller.updateSet(selectedSet);
+        controller.updateTestSet(selectedSet);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -558,7 +564,6 @@ public class MBTestSetTreeView implements Serializable {
                                 step.setName(stepEdit.getName());
                                 step.setDescription(stepEdit.getDescription());
                                 step.setExpected(stepEdit.getExpected());
-                                System.out.println("SETOVAO: "+step);
                             }
                         }
                     }

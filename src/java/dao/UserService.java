@@ -22,13 +22,13 @@ public class UserService {
     public void save(User entity){
         userDao.openCurrentSessionWithTransaction();
         userDao.save(entity);
-        userDao.closeCurrentSessionwithTransaction();
+        userDao.closeCurrentSessionWithTransaction();
     }
     
     public void update(User entity){
         userDao.openCurrentSessionWithTransaction();
         userDao.update(entity);
-        userDao.closeCurrentSessionwithTransaction();
+        userDao.closeCurrentSessionWithTransaction();
     }
     
     public User findById(String id){
@@ -42,7 +42,7 @@ public class UserService {
         userDao.openCurrentSessionWithTransaction();
         User user = userDao.findById(id);
         userDao.delete(user);
-        userDao.closeCurrentSessionwithTransaction();
+        userDao.closeCurrentSessionWithTransaction();
     }
     
     public List<User> findAll(){
@@ -55,7 +55,7 @@ public class UserService {
     public void deleteAll(){
         userDao.openCurrentSessionWithTransaction();
         userDao.deleteAll();
-        userDao.closeCurrentSessionwithTransaction();
+        userDao.closeCurrentSessionWithTransaction();
     }
     
     public UserDao userDao(){
@@ -65,6 +65,6 @@ public class UserService {
     public void saveOrUpdate(User entity){
         userDao.openCurrentSessionWithTransaction();
         userDao.saveOrUpdate(entity);
-        userDao.closeCurrentSessionwithTransaction();
+        userDao.closeCurrentSessionWithTransaction();
     }
 }

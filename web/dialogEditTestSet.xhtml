@@ -19,8 +19,7 @@
                         selection="#{mbTestSetTreeView.selectedSourceNode}"
                         draggable="true" 
                         droppable="true" 
-                        dragdropScope="demo"
-                        >
+                        dragdropScope="demo">
                     <p:ajax event="dragdrop" listener="#{mbTestSetTreeView.onDragDrop2}" update="@form" />
                     <p:treeNode>
                         <h:outputText value="#{node.name}" />

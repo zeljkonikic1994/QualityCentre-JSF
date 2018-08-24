@@ -39,7 +39,7 @@ public class UserDao implements DaoInterface<User, String> {
         currentSession.close();
     }
 
-    public void closeCurrentSessionwithTransaction() {
+    public void closeCurrentSessionWithTransaction() {
         currentTransaction.commit();
         currentSession.close();
     }
