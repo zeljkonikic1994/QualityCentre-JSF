@@ -10,6 +10,7 @@ import dto.Folder;
 import dto.Step;
 import dto.Test;
 import dto.TestSet;
+import dto.TreeTableNode;
 import entities.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -411,7 +412,7 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void onSaveNodeLabel(Object node) {
-        System.out.println(node);
+        
     }
 
     public void saveTestSet() {

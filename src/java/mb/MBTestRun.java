@@ -12,10 +12,12 @@ import dto.Test;
 import dto.TestSet;
 import dto.TreeTableNode;
 import entities.CompletionStatus;
+import entities.User;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
@@ -93,6 +95,8 @@ public class MBTestRun implements Serializable {
     }
 
     public void exitWithSaving() {
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        testSet.setModifiedBy(user.getUserName());
         controller.updateTestSet(testSet);
         PrimeFaces.current().dialog().closeDynamic(null);
         this.testSet = null;

@@ -109,6 +109,9 @@ public class MBRegister {
     }
 
     public String register() {
+//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Passwords do not match.", null);
+//            FacesContext.getCurrentInstance().addMessage(null, message);
+//            return "";
         if (!checkIfAllFieldsAreEntered()) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "You must enter all fields.", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -132,7 +135,6 @@ public class MBRegister {
                 return "";
             }
         }
-
     }
 
     private boolean checkIfAllFieldsAreEntered() {
