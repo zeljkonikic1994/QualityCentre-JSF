@@ -126,7 +126,7 @@
                 </h:form>
             </p:tab>
 
-            <p:tab title="Statistics">
+            <p:tab title="Statistics" rendered="#{not empty currentUser and currentUser.type.id eq 1}">
                 <h:panelGrid columns="2" columnClasses="left,right" style="width:100%">
                     <p:chart type="bar" model="#{mbChartView.statistics}" style="width:400px;" />
                 </h:panelGrid>

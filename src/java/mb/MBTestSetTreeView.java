@@ -416,16 +416,10 @@ public class MBTestSetTreeView implements Serializable {
     }
 
     public void saveTestSet() {
-        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        User user = (User) FacesContext.getCurrentInstance()
+                .getExternalContext().getSessionMap().get("currentUser");
         selectedSet.setModifiedBy(user.getUserName());
         selectedSet.setDateModified(new Date());
-        for (Folder folder : selectedSet.getFolderList()) {
-            for (Step step : folder.getStepList()) {
-                if(step.getTestId()==29){
-                    System.out.println("PRE CUVANJA: "+step);
-                }
-            }
-        }
         controller.updateTestSet(selectedSet);
         clearFields();
         PrimeFaces.current().dialog().closeDynamic(null);

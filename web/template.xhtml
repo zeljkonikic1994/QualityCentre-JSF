@@ -43,6 +43,13 @@
                         <ul class="nav navbar-nav navbar-right" style="margin-top: 20px;">
                             <li class="active" style="margin-right: 10px;">
                                 <h:form>
+                                    <h:commandLink action="/faces/home.xhtml" style="text-decoration: none;" rendered="#{not empty currentUser}" >
+                                        Home
+                                    </h:commandLink>
+                                </h:form>
+                            </li>
+                            <li class="active" style="margin-right: 10px;">
+                                <h:form>
                                     <h:commandLink action="/faces/userManagement.xhtml" style="text-decoration: none;" rendered="#{not empty currentUser and currentUser.type.id eq 1}" >
                                         User management
                                     </h:commandLink>

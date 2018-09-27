@@ -5,71 +5,89 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <title>${mbTestSetTreeView.selectedSet.name}</title>
+        <style>
+            .ui-widget-content{
+                border:none;
+            }
+            .ui-tree-container{
+                width:max-content;
+            }
+            .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield{
+                width:100px;
+            }
+            .ui-treenode-label ui-corner-all ui-state-highlight{
+                background:none;
+            }
+            
+        </style>
     </h:head>
     <h:body>
         <h:form id="form">
             <p:growl id="msgs" showDetail="true" />
+            <div style="margin: 0 auto;">
 
-            <h:panelGrid columns="3" >
-                <p:tree id="tree1" 
-                        value="#{mbTestSetTreeView.sourceRoot}" 
-                        var="node" 
-                        selectionMode="single" 
-                        selection="#{mbTestSetTreeView.selectedSourceNode}"
-                        draggable="true" 
-                        droppable="true" 
-                        dragdropScope="demo">
-                    <p:ajax event="dragdrop" listener="#{mbTestSetTreeView.onDragDrop2}" update="@form" />
-                    <p:treeNode>
-                        <h:outputText value="#{node.name}" />
-                    </p:treeNode>
-                </p:tree>
+                <h:panelGrid columns="3" >
+                    <p:tree id="tree1" 
+                            value="#{mbTestSetTreeView.sourceRoot}" 
+                            var="node" 
+                            selectionMode="single" 
+                            selection="#{mbTestSetTreeView.selectedSourceNode}"
+                            draggable="true" 
+                            droppable="true" 
+                            dragdropScope="demo">
+                        <p:ajax event="dragdrop" listener="#{mbTestSetTreeView.onDragDrop2}" update="@form" />
+                        <p:treeNode>
+                            <h:outputText value="#{node.name}" />
+                        </p:treeNode>
+                    </p:tree>
 
-                <p:graphicImage alt="Transfer" name="images/transfer.png" />
+                    <p:graphicImage alt="Transfer" name="images/transfer.png" />
 
-                <p:tree id="tree2" 
-                        value="#{mbTestSetTreeView.destinationRoot}" 
-                        var="node" 
-                        selectionMode="single" 
-                        selection="#{mbTestSetTreeView.selectedDestinationNode}"
-                        draggable="true" 
-                        droppable="true" 
-                        dragdropScope="demo"
-                        >
-                    <p:ajax event="dragdrop" listener="#{mbTestSetTreeView.onDragDrop}" update="@form" />
-                    <p:treeNode icon="ui-icon-grip-diagonal-se">
-                        <h:outputText value="#{node.name}" />
-                    </p:treeNode>
-                    <p:treeNode type="folder" icon="ui-icon-document">
-                        <p:inplace editor="true" event="dblclick">
-                            <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
-                            <p:inputText value="#{node.name}" />
-                        </p:inplace>
-                    </p:treeNode>
-                    <p:treeNode type="step" icon="ui-icon-comment">
-                        <p:inplace editor="true" event="dblclick">
-                            <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
-                            <p:inputText value="#{node.name}" />
-                        </p:inplace>
-                    </p:treeNode>
-                </p:tree>
+                    <p:tree id="tree2" 
+                            value="#{mbTestSetTreeView.destinationRoot}" 
+                            var="node" 
+                            selectionMode="single" 
+                            selection="#{mbTestSetTreeView.selectedDestinationNode}"
+                            draggable="true" 
+                            droppable="true" 
+                            dragdropScope="demo"
+                            >
+                        <p:ajax event="dragdrop" listener="#{mbTestSetTreeView.onDragDrop}" update="@form" />
+                        <p:treeNode icon="ui-icon-grip-diagonal-se">
+                            <h:outputText value="#{node.name}" />
+                        </p:treeNode>
+                        <p:treeNode type="folder" icon="ui-icon-document">
+                            <p:inplace editor="true" event="dblclick">
+                                <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
+                                <p:inputText value="#{node.name}" />
+                            </p:inplace>
+                        </p:treeNode>
+                        <p:treeNode type="step" icon="ui-icon-comment">
+                            <p:inplace editor="true" event="dblclick">
+                                <p:ajax event="save" listener="#{mbTestSetTreeView.onSaveNodeLabel(node)}" update="@form" />
+                                <p:inputText value="#{node.name}" />
+                            </p:inplace>
+                        </p:treeNode>
+                    </p:tree>
 
-                <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.saveTestSet()}" update="@form">
-                    <h:outputText value="Save test set"></h:outputText>
-                </p:commandLink>
-                <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.exitWithoutSaving()}" immediate="true">
-                    <h:outputText value="Cancel"></h:outputText>
-                </p:commandLink>
-                <p:contextMenu for="tree2" nodeType="folder">
-                    <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
-                </p:contextMenu>
-                <p:contextMenu for="tree2" nodeType="step">
-                    <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
-                    <p:menuitem value="Edit" update="@form" actionListener="#{mbTestSetTreeView.editStep}" icon="ui-icon-close"/>
-                </p:contextMenu>
+                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.saveTestSet()}" update="@form">
+                        <h:outputText value="Save test set"></h:outputText>
+                    </p:commandLink>
+                    <p:commandLink style="padding: .2em 1em;" styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" actionListener="#{mbTestSetTreeView.exitWithoutSaving()}" immediate="true">
+                        <h:outputText value="Cancel"></h:outputText>
+                    </p:commandLink>
+                    <p:contextMenu for="tree2" nodeType="folder">
+                        <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
+                    </p:contextMenu>
+                    <p:contextMenu for="tree2" nodeType="step">
+                        <p:menuitem value="Remove" update="@form" actionListener="#{mbTestSetTreeView.delete}" icon="ui-icon-close"/>
+                        <p:menuitem value="Edit" update="@form" actionListener="#{mbTestSetTreeView.editStep}" icon="ui-icon-close"/>
+                    </p:contextMenu>
 
-            </h:panelGrid>
+                </h:panelGrid>
+            </div>
+
         </h:form>
     </h:body>
 </html>

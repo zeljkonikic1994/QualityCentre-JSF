@@ -41,5 +41,13 @@ public class EntityHelper {
         }
         return dtos;
     }
+    
+    public static List<TestSet> convertToTestSetList(List<dto.TestSet> testSetList){
+        List<TestSet> testSets = new ArrayList<>();
+        for (dto.TestSet testSet : testSetList) {
+            testSets.add(TestSetConverter.convertToTestSet(testSet));
+        }
+        return testSets;
+    }
 
 }
